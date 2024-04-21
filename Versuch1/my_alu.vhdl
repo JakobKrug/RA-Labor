@@ -20,13 +20,17 @@ library ieee;
 
 entity my_alu is
 -- begin solution:
+generic (
+  dataWidth  : integer := DATA_WIDTH_GEN;
+  opCodeWidth    : integer := OPCODE_WIDTH
+);
 port(
-  P_OP1, P_OP2: in std_logic_vector(G_DATA_WIDTH-1 downto 0);
-	P_ALU_OP: in std_logic_vector (G_OP_WIDTH-1 downto 0);
-	P_CLK: in std_logic;
-	P_ALU_OUT: out std_logic_vector (G_DATA_WIDTH-1 downto 0);
-	P_CARRY_OUT: out std_logic
-)
+  pi_op1, pi_op2: in std_logic_vector(dataWidth-1 downto 0);
+	pi_aluOp: in std_logic_vector (opCodeWidth-1 downto 0);
+	pi_clk: in std_logic;
+	po_aluOut: out std_logic_vector (dataWidth-1 downto 0);
+	po_carryOut: out std_logic
+);
   -- end solution!!
 end entity my_alu;
 
@@ -129,30 +133,30 @@ s_op1,
       elsif (pi_aluOp = SLL_ALU_OP) then
         -- SLL
         -- begin solution:
-        s_shift_type <= P_ALU_OP(G_OP_WIDTH-1);
-        s_shift_direction <= '0';
+        s_shiftType <= pi_aluOp(opCodeWidth-1);
+        s_shiftDirection <= '0';
         -- end solution!!
       elsif (pi_aluOp = SRL_ALU_OP) then
         -- SRL
         -- begin solution:
-        s_shift_type <= P_ALU_OP(G_OP_WIDTH-1);
-		  s_shift_direction <= '1';
+        s_shiftType <= pi_aluOp(opCodeWidth-1);
+		  s_shiftDirection <= '1';
         -- end solution!!
       elsif (pi_aluOp = SRA_OP_ALU) then
         -- SRA
         -- begin solution:
-        s_shift_type <= P_ALU_OP(G_OP_WIDTH-1);
-		    s_shift_direction <= '1';
+        s_shiftType <= pi_aluOp(opCodeWidth-1);
+		    s_shiftDirection <= '1';
         -- end solution!!
       elsif (pi_aluOp = ADD_OP_ALU) then
         -- ADD
         -- begin solution:
-        s_cIn <= P_ALU_OP(G_OP_WIDTH-1);
+        s_cIn <= pi_aluOp(opCodeWidth-1);
         -- end solution!!
       elsif (pi_aluOp = SUB_OP_ALU) then
         -- SUB
         -- begin solution:
-        s_cIn <= P_ALU_OP(G_OP_WIDTH-1);
+        s_cIn <= pi_aluOp(opCodeWidth-1);
         -- end solution!!
       elsif (pi_aluOp = SLT_OP_ALU) then
         -- SLT
@@ -174,49 +178,49 @@ s_op1,
       if (pi_aluOp = AND_ALU_OP) then
         -- AND
         -- begin solution:
-        P_ALU_OUT <= s_res3;
-	      P_CARRY_OUT <= '0';
+        po_aluOut <= s_res3;
+	      po_carryOut <= '0';
       -- end solution!!
       elsif (pi_aluOp = OR_ALU_OP) then
         -- OR
         -- begin solution:
-        P_ALU_OUT <= s_res2;
-	      P_CARRY_OUT <= '0';
+        po_aluOut <= s_res2;
+	      po_carryOut <= '0';
       -- end solution!!
       elsif (pi_aluOp = XOR_ALU_OP) then
         -- XOR
-        P_ALU_OUT <= s_res1;
-	      P_CARRY_OUT <= '0';
+        po_aluOut <= s_res1;
+	      po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SLL_ALU_OP) then
         -- SLL
-        P_ALU_OUT <= s_res4;
-	      P_CARRY_OUT <= '0';
+        po_aluOut <= s_res4;
+	      po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SRL_ALU_OP) then
         -- SRL
-        P_ALU_OUT <= s_res4;
-	      P_CARRY_OUT <= '0';
+        po_aluOut <= s_res4;
+	      po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SRA_OP_ALU) then
         -- SRA
-        P_ALU_OUT <= s_res4;
-	      P_CARRY_OUT <= '0';
+        po_aluOut <= s_res4;
+	      po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = ADD_OP_ALU) then
         -- ADD
-        P_ALU_OUT <= s_res5;
-	      P_CARRY_OUT <= s_cOut;
+        po_aluOut <= s_res5;
+	      po_carryOut <= s_cOut;
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SUB_OP_ALU) then
         -- SUB
-        P_ALU_OUT <= s_res5;
-	      P_CARRY_OUT <= s_cOut;
+        po_aluOut <= s_res5;
+	      po_carryOut <= s_cOut;
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SLT_OP_ALU) then
@@ -230,8 +234,8 @@ s_op1,
       else
         -- OTHERS
         -- begin solution:
-        P_ALU_OUT <= (others => '0');
-	      P_CARRY_OUT <= '0';
+        po_aluOut <= (others => '0');
+	      po_carryOut <= '0';
         -- end solution!!
       end if;
     end if;
