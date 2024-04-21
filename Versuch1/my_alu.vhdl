@@ -179,53 +179,52 @@ s_op1,
         -- AND
         -- begin solution:
         po_aluOut <= s_res3;
-	      po_carryOut <= '0';
+	    po_carryOut <= '0';
       -- end solution!!
       elsif (pi_aluOp = OR_ALU_OP) then
         -- OR
         -- begin solution:
         po_aluOut <= s_res2;
-	      po_carryOut <= '0';
+	    po_carryOut <= '0';
       -- end solution!!
       elsif (pi_aluOp = XOR_ALU_OP) then
         -- XOR
         po_aluOut <= s_res1;
-	      po_carryOut <= '0';
+	    po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SLL_ALU_OP) then
         -- SLL
         po_aluOut <= s_res4;
-	      po_carryOut <= '0';
+	    po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SRL_ALU_OP) then
         -- SRL
         po_aluOut <= s_res4;
-	      po_carryOut <= '0';
+	    po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SRA_OP_ALU) then
         -- SRA
         po_aluOut <= s_res4;
-	      po_carryOut <= '0';
+	    po_carryOut <= '0';
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = ADD_OP_ALU) then
         -- ADD
         po_aluOut <= s_res5;
-	      po_carryOut <= s_cOut;
+	    po_carryOut <= s_cOut;
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SUB_OP_ALU) then
         -- SUB
         po_aluOut <= s_res5;
-	      po_carryOut <= s_cOut;
+	    po_carryOut <= s_cOut;
         -- begin solution:
       -- end solution!!
       elsif (pi_aluOp = SLT_OP_ALU) then
         -- SLT
-        -- begin solution:
         -- begin solution:
         -- end solution!!                                                                                     -- SLTU
       elsif (pi_aluOp = EQ_OP_ALU) then
@@ -235,7 +234,7 @@ s_op1,
         -- OTHERS
         -- begin solution:
         po_aluOut <= (others => '0');
-	      po_carryOut <= '0';
+	    po_carryOut <= '0';
         -- end solution!!
       end if;
     end if;
