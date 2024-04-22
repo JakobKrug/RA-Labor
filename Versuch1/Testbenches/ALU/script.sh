@@ -15,4 +15,4 @@ ghdl -a ../../my_alu.vhdl
 
 ghdl -a ../../Testbenches/ALU/my_alu_tb.vhdl
 ghdl -e my_alu_tb
-ghdl -r my_alu_tb --vcd=my_alu_tb.vcd
+ghdl -r my_alu_tb --vcd=my_alu_tb.vcd --stop-time=100ns
