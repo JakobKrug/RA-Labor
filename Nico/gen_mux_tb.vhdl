@@ -40,10 +40,10 @@ begin
   s_selector <= '0';  
   wait for 5 ns;
   
- s_first <= std_logic_vector(to_unsigned(i, DATA_WIDTH_GEN));
+  s_first <= std_logic_vector(to_unsigned(i, DATA_WIDTH_GEN));
   
-  assert s_output = s_first; 
-    report "Had an error with imput:" & integer'image(i) severity error;
+  assert s_first= s_output; 
+    report "Had an error with input:" & integer'image(i) severity error;
   end loop;
   wait for 5 ns;
     
@@ -51,10 +51,10 @@ begin
   s_selector <= '1'; 
   wait for 5 ns;
  
- s_second <= std_logic_vector(to_unsigned(j, DATA_WIDTH_GEN));
+  s_second <= std_logic_vector(to_unsigned(j, DATA_WIDTH_GEN));
  
-   assert s_output = s_second;
-    report "Had an error with imput:" & integer'image(j) severity error;
+  assert s_output = s_second;
+    report "Had an error with input:" & integer'image(j) severity error;
    end loop;
    wait for 5 ns;
   
