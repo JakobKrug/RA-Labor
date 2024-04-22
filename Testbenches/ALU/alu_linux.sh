@@ -1,7 +1,7 @@
 #!/bin/bash
 rm work-*.cf
 
-ghdl -a ../../Constant_Package.vhdl
+ghdl -a ../../Packages/Constant_Package.vhdl
 
 ghdl -a ../../Komponenten/ALU/my_shifter.vhdl
 ghdl -a ../../Komponenten/ALU/my_half_adder.vhdl
