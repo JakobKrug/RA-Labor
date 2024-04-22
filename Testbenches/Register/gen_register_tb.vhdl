@@ -43,7 +43,7 @@ begin
    s_data_in <= std_logic_vector(to_unsigned(i,REG_ADR_WIDTH));
    
    assert s_data_in = s_data_out 
-   report "Had an error width input:" & integer'image(i) serity error;
+   report "Had an error with input:" & integer'image(i) severity error;
    end loop;
    wait for 10 ns;
    
@@ -60,12 +60,10 @@ begin
    wait for 10 ns;
    
    assert v_error_count = 0
-     report "Had ann error with resetting the register" severity error;
+     report "Had an error with resetting the register" severity error;
      wait for 10 ns;
      
    assert false report "end of test" severity note;
    wait;
   end process;
 end architecture testbench;
-
-Reference: https://www.physicsforums.com/threads/vhdl-register-file-test-bench.581281/bench;

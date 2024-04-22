@@ -29,9 +29,9 @@ architecture behavior of gen_register is
  signal s_rst : std_logic := '0';
  signal s_cur_d : std_logic_vector(registerWidth - 1 downto 0) := (others => '0');
  
- begin 
-    s_clk <= pi_clk;
-    s_rst <= s_rst;
+begin
+   s_clk <= pi_clk;
+   s_rst <= s_rst;
 
  process(s_clk, s_rst)
  begin
