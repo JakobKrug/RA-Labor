@@ -13,6 +13,6 @@ ghdl -a ../../Komponenten/ALU/my_gen_and.vhdl
 
 ghdl -a ../../Komponenten/ALU/my_alu.vhdl
 
-ghdl -a ../../Testbenches/ALU/my_alu_tb.vhdl
+ghdl -a my_alu_tb.vhdl
 ghdl -e my_alu_tb
-ghdl -r my_alu_tb --vcd=my_alu_tb.vcd --stop-time=1ms
+ghdl -r my_alu_tb --vcd=my_alu_tb.vcd
