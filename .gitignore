@@ -1,4 +1,4 @@
 work-*.cf
 *.vcd
 *.zip
-Nico/*
+.vscode/

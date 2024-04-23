@@ -1,11 +1,11 @@
 library ieee;
-use ieee.std_logic_1164.all;
+    use ieee.std_logic_1164.all;
 
 entity my_full_adder is
-  port (
-	pi_a, pi_b, pi_carryIn: in std_logic;
-	po_sum, po_carryOut: out std_logic
-  );
+    port (
+        pi_a, pi_b, pi_carryIn: in std_logic;
+        po_sum, po_carryOut: out std_logic
+    );
 end my_full_adder;
 
 architecture structure of my_full_adder is

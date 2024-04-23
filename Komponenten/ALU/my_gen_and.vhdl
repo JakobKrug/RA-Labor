@@ -1,6 +1,6 @@
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use work.Constant_Package.ALL;
+    use IEEE.STD_LOGIC_1164.ALL;
+    use work.Constant_Package.ALL;
 
 entity my_gen_and is
 	generic(
