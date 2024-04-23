@@ -1,9 +1,9 @@
 -- Laboratory RA solutions/versuch1
 -- Sommersemester 24
 -- Group Details
--- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
+-- Lab Date: 23.04.2024
+-- 1. Participant First and Last Name: Jakob Benedikt Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 
 
 library ieee;
@@ -42,7 +42,7 @@ process
     
     s_first <= std_logic_vector(to_unsigned(i, DATA_WIDTH_GEN));
     
-    assert s_first= s_output report "Had an error with input:" & integer'image(i) severity error;
+    assert s_first = s_output report "Had an error with input:" & integer'image(i) severity error;
     end loop;
     wait for 5 ns;
       

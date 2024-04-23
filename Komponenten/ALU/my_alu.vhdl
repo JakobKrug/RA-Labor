@@ -1,9 +1,9 @@
 -- Laboratory RA solutions/versuch1
 -- Sommersemester 24
 -- Group Details
--- Lab Date:
+-- Lab Date: 23.04.2024
 -- 1. Participant First and Last Name: Jakob Benedikt Krug
--- 2. Participant First and Last Name:
+-- 2. Participant First and Last Name: Nicolas Schmidt
 
 -- ========================================================================
 -- Author:       Marcel Rieß, with additions by Niklas Gutsmiedl

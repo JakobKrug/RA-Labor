@@ -1,9 +1,9 @@
 -- Laboratory RA solutions/versuch1
 -- Sommersemester 24
 -- Group Details
--- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
+-- Lab Date: 23.04.2024
+-- 1. Participant First and Last Name: Jakob Benedikt Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 
 
 library ieee;
@@ -27,20 +27,20 @@ end gen_register;
 architecture behavior of gen_register is
  signal s_clk : std_logic := '0';
  signal s_rst : std_logic := '0';
- signal s_cur_d : std_logic_vector(registerWidth - 1 downto 0) := (others => '0');
+ signal s_current_data : std_logic_vector(registerWidth - 1 downto 0) := (others => '0');
  
 begin
    s_clk <= pi_clk;
    s_rst <= s_rst;
 
- process(s_clk, s_rst)
+ process(s_clk, s_rst, s_current_data)
  begin
   if falling_edge(s_clk) then
-  s_cur_d <= pi_data;
+  s_current_data <= pi_data;
   end if;
   if (s_rst = '1') then 
-  s_cur_d <= (others => '0'); 
+  s_current_data <= (others => '0'); 
   end if;
-  po_data <= s_cur_d;
+  po_data <= s_current_data;
  end process;
 end behavior;

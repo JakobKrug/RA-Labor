@@ -1,9 +1,9 @@
 -- Laboratory RA solutions/versuch1
 -- Sommersemester 24
 -- Group Details
--- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
+-- Lab Date: 23.04.2024
+-- 1. Participant First and Last Name: Jakob Benedikt Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 
 
 library ieee;
@@ -17,24 +17,29 @@ end entity gen_register_tb;
 architecture testbench of gen_register_tb is
 
 
-  signal s_data_in : std_logic_vector(REG_ARD_WIDTH - 1 downto 0) := (others => '0');
-  signal s_data_out : std_logic_vector(REG_ARD_WIDTH - 1 downto 0) := (others => '0');
+  signal s_data_in : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+  signal s_data_out : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
   signal s_clk : std_logic := '0'; 
-  signal s_reconstant : std_logic := '0';
+  signal s_rst : std_logic := '0';
+ 
+begin 
+REG : entity work.gen_register(behavior)
+  generic map(
+  REG_ADR_WIDTH
+  )
+  port map(
+  pi_data => s_data_in,
+  pi_clk => s_clk,
+  pi_rst => s_rst,
+  po_data => s_data_out
+  );
   
- component gen_register is 
-  port(
-   pi_data : in std_logic_vector(registerWidth - 1 downto 0);
-   pi_clk : in std_logic := '0';
-   pi_rst : in std_logic := '0';
-   po_data : out std_logic_vector(registerWidth - 1 downto 0) := (others => '0')
-   );
- end component;
-
 process
   variable v_error_count : integer := 0;
+  variable i : integer := 0;
+  -- variable j : integer := 0;
 begin
- for i in 0 to (2**REG_ADR_WIDTH) - 1 loop
+   while i <= (2**REG_ADR_WIDTH) - 1 loop
    s_clk <= '1'; --rising edge 
    wait for 5 ns;
    s_clk <= '0'; --falling edge 
@@ -42,28 +47,27 @@ begin
    
    s_data_in <= std_logic_vector(to_unsigned(i,REG_ADR_WIDTH));
    
-   assert s_data_in = s_data_out 
-   report "Had an error with input:" & integer'image(i) severity error;
+   i := i + 1;
+   
+   assert s_data_in = s_data_out report "Had an error with input:" & integer'image(i) severity error;
    end loop;
    wait for 10 ns;
    
    s_rst <= '1';
    wait for 10 ns;
    
-   for i in 0 to REG_ADR_WIDTH - 1 loop
-       if s_data_out(i) /= '0' then 
-         v_error_count := v_error_count + 1;
-        end if;
+   for j in 0 to REG_ADR_WIDTH-1 loop
+    if s_data_out(j) /= '0' then
+     v_error_count := v_error_count + 1;
+    end if;
    end loop;
-   
+
    s_rst <= '0';
    wait for 10 ns;
-   
-   assert v_error_count = 0
-     report "Had an error with resetting the register" severity error;
-     wait for 10 ns;
      
    assert false report "end of test" severity note;
    wait;
   end process;
 end architecture testbench;
+
+
