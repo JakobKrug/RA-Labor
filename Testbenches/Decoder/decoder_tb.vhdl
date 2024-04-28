@@ -51,8 +51,7 @@ begin
     func7 := "0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0);
     s_instruction <= func7 & std_logic_vector(to_unsigned(v_rs2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(v_rs1, REG_ADR_WIDTH)) & func3 & std_logic_vector(to_unsigned(v_rd, REG_ADR_WIDTH)) & ADD_OP_INS; -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-    report to_string(s_instruction);
-
+    
     v_expectedControlWord.I_IMM_SEL := '0';
     v_expectedControlWord.ALU_OP := ADD_OP_ALU;
     s_clk <= '1';

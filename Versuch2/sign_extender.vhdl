@@ -19,10 +19,27 @@ library ieee;
 
 entity sign_extender is
 -- begin solution:
+port(
+    pi_instr : in std_logic_vector(word_width - 1 downto 0);
+    po_iImmediate, po_uImmediate, po_bImmediate, po_jImmediate : out std_logic_vector(word_width - 1 downto 0)
+);
    -- end solution!!
 end entity sign_extender;
 
 architecture arc of sign_extender is
 -- begin solution:
+begin
+    process (pi_instr)
+        variable sign_extended : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    begin
+        -- Perform sign extension based on RISC-V specification
+        sign_extended := (others => pi_instr(31)); -- Fill with sign bit
+
+        -- Assign sign-extended value to respective outputs
+        po_iImmediate <= sign_extended(31 downto 20) & pi_instr(19 downto 0); -- I-type Immediate
+        po_uImmediate <= (others => '0') & pi_instr(19 downto 0);             -- U-type Immediate
+        po_bImmediate <= sign_extended(31) & pi_instr(7) & pi_instr(30 downto 25) & pi_instr(11 downto 8) & (others => '0'); -- B-type Immediate
+        po_jImmediate <= sign_extended(31) & pi_instr(19 downto 12) & pi_instr(20) & pi_instr(30 downto 21) & (others => '0'); -- J-type Immediate
+    end process;
  -- end solution!!
 end architecture arc;

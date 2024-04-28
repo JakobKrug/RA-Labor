@@ -19,7 +19,7 @@ entity decoder is
 port(
     pi_clk : in std_logic := '0';
     pi_instruction : in std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-    po_controlWord : out controlWord
+    po_controlWord : out controlWord := control_word_init
 );
 -- end solution!!
 end entity decoder;
@@ -27,9 +27,7 @@ end entity decoder;
 
 architecture arc of decoder is
 -- begin solution:
-signal test : std_logic_vector(3 downto 0) := (others => '0');
 begin
-    po_controlWord <= control_word_init;
     process(pi_clk)
     variable v_insFormat : t_instruction_type;
     begin 
@@ -39,8 +37,9 @@ begin
                 when others => v_insFormat := nullFormat;
             end case;
 
-            case v_insformat is
-                when rFormat => po_controlWord.ALU_OP <= ;
+            case v_insFormat is
+                when rFormat => po_controlWord.ALU_OP <= pi_instruction(30) & pi_instruction(14 downto 12);
+                -- report "My Result " & to_string(pi_instruction(30) & pi_instruction(14 downto 12));
                 when others => po_controlWord <= control_word_init;
             end case;
         end if;
