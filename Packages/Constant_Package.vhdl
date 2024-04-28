@@ -1,3 +1,18 @@
+-- Laboratory RA solutions/versuch2
+-- Sommersemester 24
+-- Group Details
+-- Lab Date:
+-- 1. Participant First and Last Name: 
+-- 2. Participant First and Last Name:
+ 
+ 
+-- coding conventions
+-- g_<name> Generics
+-- p_<name> Ports
+-- c_<name> Constants
+-- s_<name> Signals
+-- v_<name> Variables
+
 -- ========================================================================
 -- Author:       Marcel Rieß, with additions by Niklas Gutsmiedl
 -- Last updated: 19.03.2024
@@ -16,7 +31,7 @@ package constant_package is
   constant DATA_WIDTH_GEN   : integer := 8;
   constant REG_ADR_WIDTH    : integer := 5;
   constant ADR_WIDTH        : integer := 32;
-  constant WORD_WIDTH       : integer := 16;
+  constant WORD_WIDTH       : integer := 32;
   constant FUNC3_WIDTH      : integer := 3;
 
   -- Instruction Opcodes for ALU

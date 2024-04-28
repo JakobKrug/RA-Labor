@@ -27,6 +27,7 @@ end entity decoder;
 
 architecture arc of decoder is
 -- begin solution:
+signal test : std_logic_vector(3 downto 0) := (others => '0');
 begin
     po_controlWord <= control_word_init;
     process(pi_clk)
@@ -39,7 +40,7 @@ begin
             end case;
 
             case v_insformat is
-                when rFormat => po_controlWord.ALU_OP <= pi_instruction(31) & pi_instruction(OPCODE_WIDTH + REG_ADR_WIDTH + FUNC3_WIDTH downto OPCODE_WIDTH + REG_ADR_WIDTH - 1);
+                when rFormat => po_controlWord.ALU_OP <= "0000";
                 when others => po_controlWord <= control_word_init;
             end case;
         end if;
