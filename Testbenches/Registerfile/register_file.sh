@@ -7,4 +7,4 @@ ghdl -a --std=08 ../../Komponenten/Registerfile/register_file_fred.vhdl
 
 ghdl -a --std=08 register_file_tb.vhdl
 ghdl -e --std=08 register_file_tb
-ghdl -r --std=08 register_file_tb --vcd=register_file_tb.vcd
+ghdl -r --std=08 register_file_tb --stop-time=200ns --vcd=register_file_tb.vcd
