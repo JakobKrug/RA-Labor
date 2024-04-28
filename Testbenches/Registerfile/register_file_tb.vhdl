@@ -21,7 +21,7 @@ architecture behavior of register_file_tb is
 begin
 
   lu1 : entity work.register_file
-    generic map (WORD_WIDTH, REG_ADR_WIDTH, 2 ** REG_ADR_WIDTH    )
+    generic map (WORD_WIDTH, REG_ADR_WIDTH, 2 ** REG_ADR_WIDTH)
     port map (
       pi_readRegAddr1          => s_addressRs1,
       pi_readRegAddr2          => s_addressRs2,

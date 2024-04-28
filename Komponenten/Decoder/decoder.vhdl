@@ -13,12 +13,12 @@ library ieee;
 
 entity decoder is
 -- begin solution:
-generic(
-    word_width : integer := WORD_WIDTH
-);
+-- generic(
+--     WORD_WIDTH : integer := WORD_WIDTH
+-- );
 port(
     pi_clk : in std_logic := '0';
-    pi_instruction : in std_logic_vector(word_width - 1 downto 0) := (others => '0');
+    pi_instruction : in std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     po_controlWord : out controlWord
 );
 -- end solution!!
@@ -40,7 +40,7 @@ begin
             end case;
 
             case v_insformat is
-                when rFormat => po_controlWord.ALU_OP <= "0000";
+                when rFormat => po_controlWord.ALU_OP <= ;
                 when others => po_controlWord <= control_word_init;
             end case;
         end if;

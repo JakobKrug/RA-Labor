@@ -14,8 +14,8 @@ library ieee;
 entity register_file is
 -- begin solution:
 generic (
-    adr_width : integer := REG_ADR_WIDTH;
     word_width : integer := WORD_WIDTH;
+    adr_width : integer := REG_ADR_WIDTH;
     reg_amount : integer := 2**REG_ADR_WIDTH
 );
 port (
