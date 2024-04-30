@@ -1,0 +1,1 @@
+zip -r test.zip Komponenten Packages Risc-V Testbenches -x *.vcd *.cf
