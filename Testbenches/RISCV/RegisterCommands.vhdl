@@ -28,10 +28,10 @@ library ieee;
     use work.types_package.all;
     use work.util_functions_package.all;
 
-entity R_only_RISC_V_tb is
-end entity R_only_RISC_V_tb;
+entity RegisterCommands is
+end entity RegisterCommands;
 
-architecture structure of R_only_RISC_V_tb is
+architecture structure of RegisterCommands is
 
     constant PERIOD                : time                                           := 10 ns;
     constant ADD_FOUR_TO_ADDRESS   : std_logic_vector(WORD_WIDTH - 1 downto 0)      := std_logic_vector(to_signed((4), WORD_WIDTH));
@@ -83,14 +83,11 @@ architecture structure of R_only_RISC_V_tb is
     --end solution!!
     signal s_registersOut : registerMemory := (others => (others => '0'));                                                                                                       
     signal s_instructions : memory:= (
-        4=> std_logic_vector'("0" & OR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & OR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(10, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        8=> std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(8, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        12=> std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(11, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        16=> std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        24=> std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(8, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        28=> std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        32=> std_logic_vector'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        36=> std_logic_vector'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & ADD_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        0 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_INS),
+        16 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_INS),
+        32 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_INS),
+        48 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_INS),
+        64 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_INS),
         others => (others => '0')
     );
 
@@ -287,41 +284,31 @@ begin
         s_clk <= '0';
         wait for PERIOD / 2;
 
-    if (i = 5) then -- after 5 clock clock cycles
-        assert (to_integer(signed(s_registersOut(10))) = 9)
-            report "OR-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(9) & " after cycle 4"
-            severity error;
-        end if;
-
-    if (i = 6) then -- after 6 clock clock cycles, the pi_first result should be written to the RF
-        assert (to_integer(signed(s_registersOut(8)))= 17)
-            report "ADD-Operation failed. Register 8 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) & " after cycle 5"
-            severity error;
-        end if;
-
-    if (i =7) then -- after 6 clock clock cycles, the pi_first result should be written to the RF
-    assert (to_integer(signed(s_registersOut(11))) = 1)
-        report "SUB-Operation failed. Register 11 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(1) & " after cycle 6"
-        severity error;
-    end if;
-
-    if (i = 9) then -- after 8 clock clock cycles, the pi_first result should be written to the RF
-    assert (to_integer(signed(s_registersOut(12))) = 1)
-        report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(1) & " after cycle 8"
-        severity error;
-
-    end if;
-    if (i = 10) then -- after 7 clock clock cycles, the pi_first result should be written to the RF
-    assert (to_integer(signed(s_registersOut(12))) = 25)
-        report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) & " after cycle 7"
-        severity error;
-    end if;
-
-        if (i = 11) then -- after 9 clock clock cycles, the pi_first result should be written to the RF
-    assert (to_integer(signed(s_registersOut(12))) = -1)
-        report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) & " after cycle 8"
-        severity error;
-    end if;
+        if (i = 4) then -- after 5 clock cycles
+            assert (to_integer(signed(s_registersOut(2))) = 17)
+            report "The current number is " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " while the expected number is " & INTEGER'image(17) & " after cycle 0"
+                severity note;
+            end if;
+            if (i = 8) then -- after 8 clock cycles
+            assert (to_integer(signed(s_registersOut(2))) = 26)
+            report "The current number is " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " while the expected number is " & INTEGER'image(26) & " after cycle 1"
+                severity note;
+            end if;
+            if (i = 12) then -- after 12 clock cycles
+            assert (to_integer(signed(s_registersOut(2))) = 35)
+            report "The current number is " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " while the expected number is " & INTEGER'image(35) & " after cycle 2"
+                severity note;
+            end if;
+            if (i = 16) then -- after 16 clock cycles
+            assert (to_integer(signed(s_registersOut(2))) = 44)
+            report "The current number is " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " while the expected number is " & INTEGER'image(44) & " after cycle 3"
+                severity note;
+            end if;
+            if (i = 20) then -- after 20 clock cycles
+            assert (to_integer(signed(s_registersOut(2))) = 53)
+            report "The current number is " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " while the expected number is " & INTEGER'image(53) & " after cycle 4"
+                severity note;
+            end if;
     end loop;
     report "End of test!!!";
     wait;
