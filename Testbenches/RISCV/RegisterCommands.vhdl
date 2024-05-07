@@ -278,7 +278,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
 
-    for i in 0 to 14 loop
+    for i in 0 to 20 loop
         s_clk <= '1';
         wait for PERIOD / 2;
         s_clk <= '0';
