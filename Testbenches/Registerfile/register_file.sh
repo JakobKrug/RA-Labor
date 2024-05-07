@@ -2,6 +2,7 @@
 rm work-*.cf
 
 ghdl -a --std=08 ../../Packages/Constant_Package.vhdl
+ghdl -a --std=08 ../../Packages/Types_Package.vhdl
 
 ghdl -a --std=08 ../../Komponenten/Registerfile/register_file.vhdl
 
