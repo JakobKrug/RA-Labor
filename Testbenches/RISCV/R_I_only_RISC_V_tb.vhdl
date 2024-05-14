@@ -53,7 +53,7 @@ ARCHITECTURE structure OF R_I_only_RISC_V_tb IS
     --ex_mem_rs
     SIGNAL s_data_ex_mem_rs : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
     --mem_wb_rs
-    SIGNAL s_writeRegAddr_registerFile : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL s_writeRegAddr : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
     --decoder
     SIGNAL s_decoder_out : controlWord := control_word_init;
     --id_ex_instr
@@ -77,20 +77,17 @@ ARCHITECTURE structure OF R_I_only_RISC_V_tb IS
     --mem_wb_alures
     SIGNAL s_data_mem_wb_alures : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
     --immediate specific
-    SIGNAL s_immediate_register           : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL s_read_reg_addr2_register_file : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL s_immediate_register1           : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL s_immediate_register2           : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    SIGNAL s_aluIn_op2 : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_extended_immediate : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
     --end solution!!
     SIGNAL s_registersOut : registerMemory := (OTHERS => (OTHERS => '0'));
     SIGNAL s_instructions : memory         := (
-        4  => STD_LOGIC_VECTOR'("0" & OR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & OR_ALU_OP(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(10, REG_ADR_WIDTH)) & R_OP_INS),   -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        8  => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & R_OP_INS),  -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        12 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(11, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        16 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        24 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        28 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        32 => STD_LOGIC_VECTOR'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        36 => STD_LOGIC_VECTOR'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        40 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(0, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & I_OP_INS),
+        4 => STD_LOGIC_VECTOR'("000000001001" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & I_OP_INS),
+        8 => STD_LOGIC_VECTOR'("000000001000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & I_OP_INS),
+        12  => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(3, REG_ADR_WIDTH)) & R_OP_INS),  -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        16 => STD_LOGIC_VECTOR'("000000001000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & I_OP_INS),
         OTHERS => (OTHERS => '0')
     );
 
@@ -151,27 +148,33 @@ BEGIN
             po_controlWord => s_decoder_out
         );
     -- End of Decoder
-    --Type_Selector
-    immediate_register : ENTITY work.gen_register
+    --Immediate Register
+    immediate_register1 : ENTITY work.gen_register
         GENERIC MAP(
-            REG_ADR_WIDTH
+            WORD_WIDTH
         )
         PORT MAP(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
-            pi_data => s_decoder_in(24 DOWNTO 20),
-            po_data => s_immediate_register
+            pi_data => s_immediate_register1,
+            po_data => s_extended_immediate
         );
-    types_mux : ENTITY work.gen_mux
-        GENERIC MAP(
-            REG_ADR_WIDTH
-        )
-        PORT MAP(
-            pi_first    => s_decoder_in(24 DOWNTO 20),
-            pi_second   => s_immediate_register,
-            pi_selector => s_decoder_out.I_IMM_SEL,
-            po_output   => s_read_reg_addr2_register_file
-        );
+    -- immediate_register2 : ENTITY work.gen_register
+    -- GENERIC MAP(
+    --     WORD_WIDTH
+    -- )
+    -- PORT MAP(
+    --     pi_clk  => s_clk2,
+    --     pi_rst  => s_rst,
+    --     pi_data => s_immediate_register2,
+    --     po_data => s_extended_immediate
+    -- );
+    immediate_sign_extender : entity work.sign_extender
+    port map(
+        pi_instr => s_decoder_in,
+        po_iImmediate => s_immediate_register1
+    );
+    --End of Immediate Register
     --2nd Clock Cylce after Instruction Fetch
     id_ex_rs : ENTITY work.gen_register
         GENERIC MAP(
@@ -220,7 +223,7 @@ BEGIN
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_data_ex_mem_rs,
-            po_data => s_writeRegAddr_registerFile
+            po_data => s_writeRegAddr
         );
     mem_wb_instr : ENTITY work.ControlWordRegister
         PORT MAP(
@@ -236,8 +239,8 @@ BEGIN
             pi_clk          => s_clk,
             pi_rst          => s_rst,
             pi_readRegAddr1 => s_decoder_in(19 DOWNTO 15),
-            pi_readRegAddr2 => s_read_reg_addr2_register_file,
-            pi_writeRegAddr => s_writeRegAddr_registerFile,
+            pi_readRegAddr2 => s_decoder_in(24 DOWNTO 20),
+            pi_writeRegAddr => s_writeRegAddr,
             pi_writeEnable  => NOT(s_decoder_out.IS_BRANCH),
             pi_writeRegData => s_data_mem_wb_alures,
             po_readRegData1 => s_read_reg_data1_register_file,
@@ -255,7 +258,17 @@ BEGIN
             pi_data => s_read_reg_data1_register_file,
             po_data => s_data_id_ex_op1
         );
-
+    --Type Selector
+    type_selector : ENTITY work.gen_mux
+        GENERIC MAP(
+            WORD_WIDTH
+        )
+        PORT MAP(
+            pi_first    => s_data_id_ex_op2,
+            pi_second   => s_extended_immediate,
+            pi_selector => s_data_id_ex_instr.I_IMM_SEL,
+            po_output   => s_aluIn_op2
+        );
     id_ex_op2 : ENTITY work.gen_register
         GENERIC MAP(
             WORD_WIDTH
@@ -275,7 +288,7 @@ BEGIN
         )
         PORT MAP(
             pi_OP1      => s_data_id_ex_op1,
-            pi_OP2      => s_data_id_ex_op2,
+            pi_OP2      => s_aluIn_op2,
             pi_aluOp    => s_decoder_out.ALU_OP,
             pi_clk      => s_clk,
             po_aluOut   => s_alu_out_my_alu,
@@ -304,17 +317,6 @@ BEGIN
             po_data => s_data_mem_wb_alures
         );
     --End of ALU
-
-    PROCESS (s_read_reg_addr2_register_file) BEGIN
-        REPORT("RD ADDRESS: " & to_string(to_integer(unsigned(s_read_reg_addr2_register_file))));
-    END PROCESS;
-    PROCESS (s_decoder_out.ALU_OP) BEGIN
-        REPORT("ALU OPCODE: " & to_string(s_decoder_out.ALU_OP));
-    END PROCESS;
-    PROCESS (s_alu_out_my_alu) BEGIN
-        REPORT("ALU OUT: " & to_string(s_alu_out_my_alu));
-    END PROCESS;
-
     PROCESS IS
     BEGIN
         s_clk <= '0';
@@ -327,44 +329,26 @@ BEGIN
             WAIT FOR PERIOD / 2;
 
             IF (i = 5) THEN -- after 5 clock cycles
-                ASSERT (to_integer(signed(s_registersOut(10))) = 9)
-                REPORT "OR-Operation failed. Register 10 contains " & INTEGER'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & INTEGER'image(9) & " after cycle 5"
+                ASSERT (to_integer(signed(s_registersOut(1))) = 9)
+                REPORT "ADDI-Operation failed. Register 1 contains " & INTEGER'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & INTEGER'image(9) & " after cycle 5"
                     SEVERITY error;
             END IF;
 
             IF (i = 6) THEN -- after 6 clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(8))) = 17)
-                REPORT "ADD-Operation failed. Register 8 contains " & INTEGER'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & INTEGER'image(17) & " after cycle 6"
+                ASSERT (to_integer(signed(s_registersOut(2))) = 8)
+                REPORT "ADDI-Operation failed. Register 2 contains " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " but should contain " & INTEGER'image(8) & " after cycle 6"
                     SEVERITY error;
             END IF;
 
             IF (i = 7) THEN -- after 7 clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(11))) = 1)
-                REPORT "SUB-Operation failed. Register 11 contains " & INTEGER'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & INTEGER'image(1) & " after cycle 7"
+                ASSERT (to_integer(signed(s_registersOut(3))) = 17)
+                REPORT "ADD-Operation failed. Register 3 contains " & INTEGER'image(to_integer(signed(s_registersOut(3)))) & " but should contain " & INTEGER'image(17) & " after cycle 7"
                     SEVERITY error;
             END IF;
 
-            IF (i = 9) THEN -- after 9 clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(12))) = 1)
-                REPORT "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(1) & " after cycle 9"
-                    SEVERITY error;
-
-            END IF;
-            IF (i = 10) THEN -- after 10 clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(12))) = 25)
-                REPORT "ADD-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(25) & " after cycle 10"
-                    SEVERITY error;
-            END IF;
-
-            IF (i = 11) THEN -- after 11 clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(12))) =- 1)
-                REPORT "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(-1) & " after cycle 11"
-                    SEVERITY error;
-            END IF;
-
-            IF (i = 12) THEN -- after 12 clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(1))) = 8)
-                REPORT "ADDI-Operation failed. Register 1 contains " & INTEGER'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & INTEGER'image(8) & " after cycle 12"
+            IF (i = 8) THEN -- after 7 clock cycles, the pi_first result should be written to the RF
+                ASSERT (to_integer(signed(s_registersOut(2))) = 16)
+                REPORT "ADDI-Operation failed. Register 2 contains " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " but should contain " & INTEGER'image(16) & " after cycle 7"
                     SEVERITY error;
             END IF;
         END LOOP;
