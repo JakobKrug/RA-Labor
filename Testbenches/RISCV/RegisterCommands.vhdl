@@ -283,7 +283,7 @@ begin
         wait for PERIOD / 2;
         s_clk <= '0';
         wait for PERIOD / 2;
-
+        report "Reg 1: " & INTEGER'image(to_integer(signed(s_registersOut(1)))) & " Reg 2: " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " in cycle " & integer'image(i);
         if (i = 4) then -- after 5 clock cycles
             assert (to_integer(signed(s_registersOut(2))) = 17)
             report "The current number is " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " while the expected number is " & INTEGER'image(17) & " after cycle 0"
