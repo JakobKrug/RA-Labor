@@ -5,58 +5,51 @@
 -- 1. Participant First and Last Name: Nicolas Schmidt 
 -- 2. Participant First and Last Name: Jakob Krug
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE work.constant_package.ALL;
-USE work.types_package.ALL;
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  use ieee.math_real.all;
+  use work.constant_package.all;
+  use work.types_package.all;
 
-ENTITY register_file IS
-    GENERIC (
-        word_width : INTEGER := WORD_WIDTH;
-        adr_width  : INTEGER := REG_ADR_WIDTH;
-        reg_amount : INTEGER := 2 ** REG_ADR_WIDTH
+entity register_file is
+    generic(
+    word_width : integer := WORD_WIDTH;
+    adr_width : integer := REG_ADR_WIDTH;
+    reg_amount : integer := 2**REG_ADR_WIDTH
     );
-    PORT (
-        pi_clk          : IN STD_LOGIC                                    := '0';
-        pi_rst          : IN STD_LOGIC                                    := '0';
-        pi_readRegAddr1 : IN STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-        pi_readRegAddr2 : IN STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-        pi_writeRegAddr : IN STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-        pi_writeRegData : IN STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0)    := (OTHERS => '0');
-        pi_writeEnable  : IN STD_LOGIC                                    := '0';
-        po_readRegData1 : OUT STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0)   := (OTHERS => '0');
-        po_readRegData2 : OUT STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0)   := (OTHERS => '0');
-        po_registerOut  : OUT registermemory                              := (OTHERS => (OTHERS => '0'))
+    port(
+    pi_clk : in std_logic := '0';
+    pi_rst : in std_logic := '0';
+    pi_readRegAddr1 : in std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+    pi_readRegAddr2 : in std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+    pi_writeRegAddr : in std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+    pi_writeRegData : in std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    pi_writeEnable : in std_logic := '0';
+    po_readRegData1 : out std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0'); 
+    po_readRegData2 : out std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    po_registerOut : out registermemory := (others => (others => '0'))
     );
-END ENTITY register_file;
+end entity register_file;
 
-ARCHITECTURE arc OF register_file IS
-    SIGNAL s_regs  : registermemory                            := (OTHERS => (OTHERS => '0'));
-    SIGNAL s_init  : BOOLEAN                                   := false;
-    CONSTANT REG_0 : STD_LOGIC_VECTOR(word_width - 1 DOWNTO 0) := (OTHERS => '0');
-BEGIN
-    PROCESS (pi_clk, pi_rst, pi_writeEnable)
-    BEGIN
-        IF NOT s_init THEN
-            -- s_regs(1) <= std_logic_vector(to_unsigned(9, WORD_WIDTH));
-            -- s_regs(2) <= std_logic_vector(to_unsigned(8, WORD_WIDTH));
-            s_init <= true;
-        END IF;
-        IF rising_edge(pi_clk) THEN
-            po_readRegData1 <= s_regs(to_integer(unsigned(pi_readRegAddr1)));
-            po_readRegData2 <= s_regs(to_integer(unsigned(pi_readRegAddr2)));
-            IF pi_writeEnable = '1' THEN
-                s_regs(to_integer(unsigned(pi_writeRegAddr))) <= pi_writeRegData;
-            END IF;
-            s_regs(0) <= REG_0;
-        END IF;
-        IF (pi_rst = '1') THEN
-            FOR i IN 1 TO reg_amount - 1 LOOP
-                s_regs(i) <= s_regs(0);
-            END LOOP;
-        END IF;
+architecture arc of register_file is
+    signal s_regs : registermemory := (others => (others => '0'));
+    signal s_init : boolean := false;
+    constant REG_0 : std_logic_vector(word_width - 1 downto 0) := (others => '0');
+    
+
+begin
+    process(pi_clk, pi_rst, pi_writeEnable)
+        begin
+            if (pi_rst = '1') then 
+                  s_regs <= (others => (others => '0'));
+            elsif rising_edge(pi_clk) then
+                    po_readRegData1 <= s_regs(to_integer(unsigned(pi_readRegAddr1))); 
+                    po_readRegData2 <= s_regs(to_integer(unsigned(pi_readRegAddr2)));
+                if pi_writeEnable = '1' AND (to_integer(unsigned(pi_writeRegAddr))) /= 0 then 
+                    s_regs(to_integer(unsigned(pi_writeRegAddr))) <= pi_writeRegData;
+                end if;
+            end if;
+        end process;
         po_registerOut <= s_regs;
-    END PROCESS;
-END ARCHITECTURE arc;
+end architecture arc;

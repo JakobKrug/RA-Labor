@@ -13,84 +13,84 @@
 --               cyle: add, sub, and, or, xor, sll, srl, sra, slt, sltu, eq
 -- ========================================================================
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
-USE work.constant_package.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.constant_package.all;
 
-ENTITY my_alu IS
+entity my_alu is
     -- begin solution:
-    GENERIC (
-        dataWidth   : INTEGER := DATA_WIDTH_GEN;
+    generic (
+        dataWidth : INTEGER := DATA_WIDTH_GEN;
         opCodeWidth : INTEGER := OPCODE_WIDTH
     );
-    PORT (
-        pi_op1, pi_op2 : IN STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0);
-        pi_aluOp       : IN STD_LOGIC_VECTOR (opCodeWidth - 1 DOWNTO 0);
-        pi_clk         : IN STD_LOGIC;
-        po_aluOut      : OUT STD_LOGIC_VECTOR (dataWidth - 1 DOWNTO 0);
-        po_carryOut    : OUT STD_LOGIC
+    port (
+        pi_op1, pi_op2 : in STD_LOGIC_VECTOR(dataWidth - 1 downto 0);
+        pi_aluOp : in STD_LOGIC_VECTOR (opCodeWidth - 1 downto 0);
+        pi_clk : in STD_LOGIC;
+        po_aluOut : out STD_LOGIC_VECTOR (dataWidth - 1 downto 0);
+        po_carryOut : out STD_LOGIC
     );
     -- end solution!!
-END ENTITY my_alu;
+end entity my_alu;
 
-ARCHITECTURE behavior OF my_alu IS
+architecture behavior of my_alu is
 
-    SIGNAL s_op1            : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_op2            : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res1           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res2           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res3           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res4           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res5           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res6           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res7           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_res8           : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)   := (OTHERS => '0');
-    SIGNAL s_cin            : STD_LOGIC                                  := '0';
-    SIGNAL s_cout           : STD_LOGIC                                  := '0';
-    SIGNAL s_shiftType      : STD_LOGIC                                  := '0';
-    SIGNAL s_shiftDirection : STD_LOGIC                                  := '0';
-    SIGNAL s_clk            : STD_LOGIC                                  := '0';
-    SIGNAL s_zeropadding    : STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 1)   := (OTHERS => '0');
-    SIGNAL s_luOp           : STD_LOGIC_VECTOR(opCodeWidth - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_op1 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_op2 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res1 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res2 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res3 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res4 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res5 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res6 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res7 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res8 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
+    signal s_cin : STD_LOGIC := '0';
+    signal s_cout : STD_LOGIC := '0';
+    signal s_shiftType : STD_LOGIC := '0';
+    signal s_shiftDirection : STD_LOGIC := '0';
+    signal s_clk : STD_LOGIC := '0';
+    signal s_zeropadding : STD_LOGIC_VECTOR(dataWidth - 1 downto 1) := (others => '0');
+    signal s_luOp : STD_LOGIC_VECTOR(opCodeWidth - 1 downto 0) := (others => '0');
 
-BEGIN
+begin
 
-    xor1 : ENTITY work.my_gen_xor
-        GENERIC MAP(
+    xor1 : entity work.my_gen_xor
+        generic map(
             dataWidth
         )
-        PORT MAP(
+        port map(
             s_op1,
             s_op2,
             s_res1
         );
 
-    or1 : ENTITY work.my_gen_or
-        GENERIC MAP(
+    or1 : entity work.my_gen_or
+        generic map(
             dataWidth
         )
-        PORT MAP(
+        port map(
             s_op1,
             s_op2,
             s_res2
         );
 
-    and1 : ENTITY work.my_gen_and
-        GENERIC MAP(
+    and1 : entity work.my_gen_and
+        generic map(
             dataWidth
         )
-        PORT MAP(
+        port map(
             s_op1,
             s_op2,
             s_res3
         );
 
-    shift : ENTITY work.my_shifter
-        GENERIC MAP(
+    shift : entity work.my_shifter
+        generic map(
             dataWidth
         )
-        PORT MAP(
+        port map(
             s_op1,
             s_op2,
             s_shiftType,
@@ -98,11 +98,11 @@ BEGIN
             s_res4
         );
 
-    add1 : ENTITY work.my_gen_n_bit_full_adder
-        GENERIC MAP(
+    add1 : entity work.my_gen_n_bit_full_adder
+        generic map(
             dataWidth
         )
-        PORT MAP(
+        port map(
             s_op1,
             s_op2,
             s_cin,
@@ -112,146 +112,157 @@ BEGIN
 
     s_clk <= pi_clk;
 
-    PROCESS (s_clk) IS
-    BEGIN
+    process (s_clk) is
+    begin
 
-        IF rising_edge(s_clk) THEN
+        if rising_edge(s_clk) then
             s_op1 <= pi_op1;
             s_op2 <= pi_op2;
-            IF (pi_aluOp = AND_ALU_OP) THEN
+            if (pi_aluOp = AND_ALU_OP) then
                 -- AND
                 -- begin solution:
                 -- end solution!!
-            ELSIF (pi_aluOp = OR_ALU_OP) THEN
+            elsif (pi_aluOp = OR_ALU_OP) then
                 -- OR
                 -- begin solution:
                 -- end solution!!
-            ELSIF (pi_aluOp = XOR_ALU_OP) THEN
+            elsif (pi_aluOp = XOR_ALU_OP) then
                 -- XOR
                 -- begin solution:
                 -- end solution!!
-            ELSIF (pi_aluOp = SLL_ALU_OP) THEN
+            elsif (pi_aluOp = SLL_ALU_OP) then
                 -- SLL
                 -- begin solution:
-                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
+                s_shiftType <= pi_aluOp(opCodeWidth - 1);
                 s_shiftDirection <= '0';
                 -- end solution!!
-            ELSIF (pi_aluOp = SRL_ALU_OP) THEN
+            elsif (pi_aluOp = SRL_ALU_OP) then
                 -- SRL
                 -- begin solution:
-                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
+                s_shiftType <= pi_aluOp(opCodeWidth - 1);
                 s_shiftDirection <= '1';
                 -- end solution!!
-            ELSIF (pi_aluOp = SRA_OP_ALU) THEN
+            elsif (pi_aluOp = SRA_OP_ALU) then
                 -- SRA
                 -- begin solution:
-                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
+                s_shiftType <= pi_aluOp(opCodeWidth - 1);
                 s_shiftDirection <= '1';
                 -- end solution!!
-            ELSIF (pi_aluOp = ADD_OP_ALU) THEN
+            elsif (pi_aluOp = ADD_OP_ALU) then
                 -- ADD
                 -- begin solution:
                 s_cIn <= pi_aluOp(opCodeWidth - 1);
                 -- end solution!!
-            ELSIF (pi_aluOp = SUB_OP_ALU) THEN
+            elsif (pi_aluOp = SUB_OP_ALU) then
                 -- SUB
                 -- begin solution:
                 s_cIn <= pi_aluOp(opCodeWidth - 1);
                 -- end solution!!
-            ELSIF (pi_aluOp = SLT_OP_ALU) THEN
+            elsif (pi_aluOp = SLT_OP_ALU) then
                 -- SLT
                 -- begin solution:
                 -- end solution!!
-            ELSIF (pi_aluOp = SLTU_OP_ALU) THEN
+            elsif (pi_aluOp = SLTU_OP_ALU) then
                 -- SLTU
                 -- begin solution:
                 -- end solution!!
-            ELSIF (pi_aluOp = EQ_OP_ALU) THEN
-            ELSE
+            elsif (pi_aluOp = EQ_OP_ALU) then
+            else
                 -- OTHERS
                 -- begin solution:
                 -- end solution!!
-            END IF;
-        END IF;
+            end if;
+        end if;
 
-        IF falling_edge(s_clk) THEN
-            IF (pi_aluOp = AND_ALU_OP) THEN
+        if falling_edge(s_clk) then
+            if (pi_aluOp = AND_ALU_OP) then
                 -- AND
                 -- begin solution:
-                po_aluOut   <= s_res3;
+                po_aluOut <= s_res3;
                 po_carryOut <= '0';
                 -- end solution!!
-            ELSIF (pi_aluOp = OR_ALU_OP) THEN
+            elsif (pi_aluOp = OR_ALU_OP) then
                 -- OR
                 -- begin solution:
-                po_aluOut   <= s_res2;
+                po_aluOut <= s_res2;
                 po_carryOut <= '0';
                 -- end solution!!
-            ELSIF (pi_aluOp = XOR_ALU_OP) THEN
+            elsif (pi_aluOp = XOR_ALU_OP) then
                 -- XOR
                 -- begin solution:
-                po_aluOut   <= s_res1;
+                po_aluOut <= s_res1;
                 po_carryOut <= '0';
                 -- end solution!!
-            ELSIF (pi_aluOp = SLL_ALU_OP) THEN
+            elsif (pi_aluOp = SLL_ALU_OP) then
                 -- SLL
                 -- begin solution:
-                po_aluOut   <= s_res4;
+                po_aluOut <= s_res4;
                 po_carryOut <= '0';
                 -- end solution!!
-            ELSIF (pi_aluOp = SRL_ALU_OP) THEN
+            elsif (pi_aluOp = SRL_ALU_OP) then
                 -- SRL
                 -- begin solution:
-                po_aluOut   <= s_res4;
+                po_aluOut <= s_res4;
                 po_carryOut <= '0';
                 -- end solution!!
-            ELSIF (pi_aluOp = SRA_OP_ALU) THEN
+            elsif (pi_aluOp = SRA_OP_ALU) then
                 -- SRA
                 -- begin solution:
-                po_aluOut   <= s_res4;
+                po_aluOut <= s_res4;
                 po_carryOut <= '0';
                 -- end solution!!
-            ELSIF (pi_aluOp = ADD_OP_ALU) THEN
+            elsif (pi_aluOp = ADD_OP_ALU) then
                 -- ADD
                 -- begin solution:
-                po_aluOut   <= s_res5;
+                po_aluOut <= s_res5;
                 po_carryOut <= s_cOut;
                 -- end solution!!
-            ELSIF (pi_aluOp = SUB_OP_ALU) THEN
+            elsif (pi_aluOp = SUB_OP_ALU) then
                 -- SUB
                 -- begin solution:
-                po_aluOut   <= s_res5;
+                po_aluOut <= s_res5;
                 po_carryOut <= s_cOut;
                 -- end solution!!
-            ELSIF (pi_aluOp = SLT_OP_ALU) THEN
+            elsif (pi_aluOp = SLT_OP_ALU) then
                 -- SLT
                 -- begin solution:
-                IF (s_op1 >= s_op2) THEN
+                if (s_op1 >= s_op2) then
                     po_aluOut <= "00000000";
                     po_carryOut <= '0';
-                ELSIF (s_op1 < s_op2) THEN
+                elsif (s_op1 < s_op2) then
                     po_aluOut <= "00000001";
                     po_carryOut <= '0';
-                END IF;
+                end if;
                 -- end solution!!
-            ELSIF (pi_aluOp = SLTU_OP_ALU) THEN
+            elsif (pi_aluOp = SLTU_OP_ALU) then
                 -- SLTU
                 -- begin solution:
-                IF (s_op1 >= s_op2) THEN
+                if (s_op1 >= s_op2) then
                     po_aluOut <= "00000000";
                     po_carryOut <= '0';
-                ELSIF (s_op1 < s_op2) THEN
+                elsif (s_op1 < s_op2) then
                     po_aluOut <= "00000001";
                     po_carryOut <= '0';
-                END IF;
+                end if;
                 -- end solution!!
-            ELSE
+            elsif (pi_aluOp = EQ_OP_ALU) then
+                -- SLTU
+                -- begin solution:
+                if (s_op1 /= s_op2) then
+                    po_aluOut <= "00000000";
+                    po_carryOut <= '0';
+                elsif (s_op1 = s_op2) then
+                    po_aluOut <= "00000001";
+                    po_carryOut <= '0';
+                end if;
+                -- end solution!!
+            else
                 -- OTHERS
                 -- begin solution:
-                po_aluOut   <= (OTHERS => '0');
+                po_aluOut <= (others => '0');
                 po_carryOut <= '0';
                 -- end solution!!
-            END IF;
-        END IF;
-    END PROCESS;
-END ARCHITECTURE behavior;
+            end if;
+        end if;
+    end process;
+end architecture behavior;
