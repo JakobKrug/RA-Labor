@@ -73,7 +73,7 @@ package body util_functions_package is
   begin
 
     -- 7 + 5 + 5 + 3 + 5 + 7 = 32
-    instr := func7 & std_logic_vector(to_unsigned(adr_rs2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(adr_rs1, REG_ADR_WIDTH)) & func3 & std_logic_vector(to_unsigned(adr_rd, REG_ADR_WIDTH)) & ADD_OP_INS; -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+    instr := func7 & std_logic_vector(to_unsigned(adr_rs2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(adr_rs1, REG_ADR_WIDTH)) & func3 & std_logic_vector(to_unsigned(adr_rd, REG_ADR_WIDTH)) & R_OP_INS; -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
     return instr;
 
   end function f_buildinstructionralu;
@@ -94,7 +94,7 @@ package body util_functions_package is
   begin
 
     -- 12 + 5 + 3 + 5 + 7 = 32
-    instr := std_logic_vector(to_signed(imm, 12)) & std_logic_vector(to_unsigned(adr_rs1, REG_ADR_WIDTH)) & func3 & std_logic_vector(to_unsigned(adr_rd, REG_ADR_WIDTH)) & ADDI_OP_INS; -- I-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+    instr := std_logic_vector(to_signed(imm, 12)) & std_logic_vector(to_unsigned(adr_rs1, REG_ADR_WIDTH)) & func3 & std_logic_vector(to_unsigned(adr_rd, REG_ADR_WIDTH)) & I_OP_INS; -- I-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
     return instr;
 
   end function f_buildinstructionialu;

@@ -4,26 +4,24 @@
 -- Lab Date: 23.04.2024
 -- 1. Participant First and Last Name: Jakob Benedikt Krug
 -- 2. Participant First and Last Name: Nicolas Schmidt
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE work.constant_package.ALL;
 
-
-library ieee;
-    use ieee.std_logic_1164.all;
-    use work.constant_package.all;
-
-entity gen_mux is
-    generic(
-        dataWidth : integer := DATA_WIDTH_GEN
+ENTITY gen_mux IS
+    GENERIC (
+        dataWidth : INTEGER := DATA_WIDTH_GEN
     );
-    port(
-        pi_first : in std_logic_vector(dataWidth-1 downto 0) := (others => '0');
-        pi_second : in std_logic_vector(dataWidth-1 downto 0) := (others => '0');
-        pi_selector : in std_logic := '0';
-        po_output : out std_logic_vector(dataWidth-1 downto 0) := (others => '0')
+    PORT (
+        pi_first    : IN STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)  := (OTHERS => '0');
+        pi_second   : IN STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0)  := (OTHERS => '0');
+        pi_selector : IN STD_LOGIC                                 := '0';
+        po_output   : OUT STD_LOGIC_VECTOR(dataWidth - 1 DOWNTO 0) := (OTHERS => '0')
     );
-end entity gen_mux;
+END ENTITY gen_mux;
 
-architecture dataflow of gen_mux is
-begin 
-    po_output <= pi_first when pi_selector = '0' else      
-        pi_second when pi_selector = '1';
-end architecture dataflow;
+ARCHITECTURE dataflow OF gen_mux IS
+BEGIN
+    po_output <= pi_first WHEN pi_selector = '0' ELSE
+        pi_second WHEN pi_selector = '1';
+END ARCHITECTURE dataflow;
