@@ -21,38 +21,38 @@ use work.constant_package.all;
 entity my_alu is
     -- begin solution:
     generic (
-        dataWidth : integer := DATA_WIDTH_GEN;
+        dataWidth   : integer := DATA_WIDTH_GEN;
         opCodeWidth : integer := OPCODE_WIDTH
     );
     port (
         pi_op1, pi_op2 : in std_logic_vector(dataWidth - 1 downto 0);
-        pi_aluOp : in std_logic_vector (opCodeWidth - 1 downto 0);
-        pi_clk : in std_logic;
-        po_aluOut : out std_logic_vector (dataWidth - 1 downto 0);
-        po_carryOut : out std_logic
+        pi_aluOp       : in std_logic_vector (opCodeWidth - 1 downto 0);
+        pi_clk         : in std_logic;
+        po_aluOut      : out std_logic_vector (dataWidth - 1 downto 0);
+        po_carryOut    : out std_logic
     );
     -- end solution!!
 end entity my_alu;
 
 architecture behavior of my_alu is
 
-    signal s_op1 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_op2 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res1 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res2 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res3 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res4 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res5 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res6 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res7 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res8 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
-    signal s_cin : std_logic := '0';
-    signal s_cout : std_logic := '0';
-    signal s_shiftType : std_logic := '0';
-    signal s_shiftDirection : std_logic := '0';
-    signal s_clk : std_logic := '0';
-    signal s_zeropadding : std_logic_vector(dataWidth - 1 downto 1) := (others => '0');
-    signal s_luOp : std_logic_vector(opCodeWidth - 1 downto 0) := (others => '0');
+    signal s_op1            : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_op2            : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res1           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res2           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res3           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res4           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res5           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res6           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res7           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res8           : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_cin            : std_logic                                  := '0';
+    signal s_cout           : std_logic                                  := '0';
+    signal s_shiftType      : std_logic                                  := '0';
+    signal s_shiftDirection : std_logic                                  := '0';
+    signal s_clk            : std_logic                                  := '0';
+    signal s_zeropadding    : std_logic_vector(dataWidth - 1 downto 1)   := (others => '0');
+    signal s_luOp           : std_logic_vector(opCodeWidth - 1 downto 0) := (others => '0');
 
 begin
 
@@ -133,19 +133,19 @@ begin
             elsif (pi_aluOp = SLL_ALU_OP) then
                 -- SLL
                 -- begin solution:
-                s_shiftType <= pi_aluOp(opCodeWidth - 1);
+                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
                 s_shiftDirection <= '0';
                 -- end solution!!
             elsif (pi_aluOp = SRL_ALU_OP) then
                 -- SRL
                 -- begin solution:
-                s_shiftType <= pi_aluOp(opCodeWidth - 1);
+                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
                 s_shiftDirection <= '1';
                 -- end solution!!
             elsif (pi_aluOp = SRA_OP_ALU) then
                 -- SRA
                 -- begin solution:
-                s_shiftType <= pi_aluOp(opCodeWidth - 1);
+                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
                 s_shiftDirection <= '1';
                 -- end solution!!
             elsif (pi_aluOp = ADD_OP_ALU) then
@@ -178,59 +178,59 @@ begin
             if (pi_aluOp = AND_ALU_OP) then
                 -- AND
                 -- begin solution:
-                po_aluOut <= s_res3;
+                po_aluOut   <= s_res3;
                 po_carryOut <= '0';
                 -- end solution!!
             elsif (pi_aluOp = OR_ALU_OP) then
                 -- OR
                 -- begin solution:
-                po_aluOut <= s_res2;
+                po_aluOut   <= s_res2;
                 po_carryOut <= '0';
                 -- end solution!!
             elsif (pi_aluOp = XOR_ALU_OP) then
                 -- XOR
                 -- begin solution:
-                po_aluOut <= s_res1;
+                po_aluOut   <= s_res1;
                 po_carryOut <= '0';
                 -- end solution!!
             elsif (pi_aluOp = SLL_ALU_OP) then
                 -- SLL
                 -- begin solution:
-                po_aluOut <= s_res4;
+                po_aluOut   <= s_res4;
                 po_carryOut <= '0';
                 -- end solution!!
             elsif (pi_aluOp = SRL_ALU_OP) then
                 -- SRL
                 -- begin solution:
-                po_aluOut <= s_res4;
+                po_aluOut   <= s_res4;
                 po_carryOut <= '0';
                 -- end solution!!
             elsif (pi_aluOp = SRA_OP_ALU) then
                 -- SRA
                 -- begin solution:
-                po_aluOut <= s_res4;
+                po_aluOut   <= s_res4;
                 po_carryOut <= '0';
                 -- end solution!!
             elsif (pi_aluOp = ADD_OP_ALU) then
                 -- ADD
                 -- begin solution:
-                po_aluOut <= s_res5;
+                po_aluOut   <= s_res5;
                 po_carryOut <= s_cOut;
                 -- end solution!!
             elsif (pi_aluOp = SUB_OP_ALU) then
                 -- SUB
                 -- begin solution:
-                po_aluOut <= s_res5;
+                po_aluOut   <= s_res5;
                 po_carryOut <= s_cOut;
                 -- end solution!!
             elsif (pi_aluOp = SLT_OP_ALU) then
                 -- SLT
                 -- begin solution:
                 if (s_op1 >= s_op2) then
-                    po_aluOut <= "00000000";
+                    po_aluOut   <= "00000000";
                     po_carryOut <= '0';
                 elsif (s_op1 < s_op2) then
-                    po_aluOut <= "00000001";
+                    po_aluOut   <= "00000001";
                     po_carryOut <= '0';
                 end if;
                 -- end solution!!
@@ -238,10 +238,10 @@ begin
                 -- SLTU
                 -- begin solution:
                 if (s_op1 >= s_op2) then
-                    po_aluOut <= "00000000";
+                    po_aluOut   <= "00000000";
                     po_carryOut <= '0';
                 elsif (s_op1 < s_op2) then
-                    po_aluOut <= "00000001";
+                    po_aluOut   <= "00000001";
                     po_carryOut <= '0';
                 end if;
                 -- end solution!!
@@ -249,17 +249,17 @@ begin
                 -- SLTU
                 -- begin solution:
                 if (s_op1 /= s_op2) then
-                    po_aluOut <= "00000000";
+                    po_aluOut   <= "00000000";
                     po_carryOut <= '0';
                 elsif (s_op1 = s_op2) then
-                    po_aluOut <= "00000001";
+                    po_aluOut   <= "00000001";
                     po_carryOut <= '0';
                 end if;
                 -- end solution!!
             else
                 -- OTHERS
                 -- begin solution:
-                po_aluOut <= (others => '0');
+                po_aluOut   <= (others => '0');
                 po_carryOut <= '0';
                 -- end solution!!
             end if;
