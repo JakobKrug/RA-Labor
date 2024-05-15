@@ -88,17 +88,17 @@ architecture structure of R_I_only_RISC_V_tb is
 
         24 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        32 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(11, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        28 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(11, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        36 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        32 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        40 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        36 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        44 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        40 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        48 => STD_LOGIC_VECTOR'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        44 => STD_LOGIC_VECTOR'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        52 => STD_LOGIC_VECTOR'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        48 => STD_LOGIC_VECTOR'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
         others => (others => '0')
     );
 
@@ -329,13 +329,13 @@ begin
             s_clk <= '0';
             wait for PERIOD / 2;
 
-            if (i = 5) then -- after 5 clock cycles
+            if (i = 5) then
                 assert (to_integer(signed(s_registersOut(1))) = 9)
                 report "ADDI-Operation failed. Register 1 contains " & INTEGER'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & INTEGER'image(9) & " after cycle 5"
                     severity error;
             end if;
 
-            if (i = 6) then -- after 6 clock cycles, the pi_first result should be written to the RF
+            if (i = 6) then
                 assert (to_integer(signed(s_registersOut(2))) = 8)
                 report "ADDI-Operation failed. Register 2 contains " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " but should contain " & INTEGER'image(8) & " after cycle 6"
                     severity error;
@@ -347,25 +347,25 @@ begin
                     severity error;
             end if;
 
-            if (i = 12) then
+            if (i = 11) then
                 assert (to_integer(signed(s_registersOut(11))) = 1)
                 report "SUB-Operation failed. Register 11 contains " & INTEGER'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & INTEGER'image(1) & " after cycle 6"
                     severity error;
             end if;
 
-            if (i = 13) then -- after 8 clock clock cycles, the pi_first result should be written to the RF
+            if (i = 12) then
                 assert (to_integer(signed(s_registersOut(12))) = 1)
                 report "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(1) & " after cycle 8"
                     severity error;
 
             end if;
-            if (i = 14) then -- after 7 clock clock cycles, the pi_first result should be written to the RF
+            if (i = 13) then
                 assert (to_integer(signed(s_registersOut(12))) = 25)
                 report "ADD-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(25) & " after cycle 7"
                     severity error;
             end if;
 
-            if (i = 15) then -- after 9 clock clock cycles, the pi_first result should be written to the RF
+            if (i = 14) then
                 assert (to_integer(signed(s_registersOut(12))) =- 1)
                 report "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(-1) & " after cycle 8"
                     severity error;

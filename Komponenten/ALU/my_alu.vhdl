@@ -21,38 +21,38 @@ use work.constant_package.all;
 entity my_alu is
     -- begin solution:
     generic (
-        dataWidth : INTEGER := DATA_WIDTH_GEN;
-        opCodeWidth : INTEGER := OPCODE_WIDTH
+        dataWidth : integer := DATA_WIDTH_GEN;
+        opCodeWidth : integer := OPCODE_WIDTH
     );
     port (
-        pi_op1, pi_op2 : in STD_LOGIC_VECTOR(dataWidth - 1 downto 0);
-        pi_aluOp : in STD_LOGIC_VECTOR (opCodeWidth - 1 downto 0);
-        pi_clk : in STD_LOGIC;
-        po_aluOut : out STD_LOGIC_VECTOR (dataWidth - 1 downto 0);
-        po_carryOut : out STD_LOGIC
+        pi_op1, pi_op2 : in std_logic_vector(dataWidth - 1 downto 0);
+        pi_aluOp : in std_logic_vector (opCodeWidth - 1 downto 0);
+        pi_clk : in std_logic;
+        po_aluOut : out std_logic_vector (dataWidth - 1 downto 0);
+        po_carryOut : out std_logic
     );
     -- end solution!!
 end entity my_alu;
 
 architecture behavior of my_alu is
 
-    signal s_op1 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_op2 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res1 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res2 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res3 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res4 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res5 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res6 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res7 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_res8 : STD_LOGIC_VECTOR(dataWidth - 1 downto 0) := (others => '0');
-    signal s_cin : STD_LOGIC := '0';
-    signal s_cout : STD_LOGIC := '0';
-    signal s_shiftType : STD_LOGIC := '0';
-    signal s_shiftDirection : STD_LOGIC := '0';
-    signal s_clk : STD_LOGIC := '0';
-    signal s_zeropadding : STD_LOGIC_VECTOR(dataWidth - 1 downto 1) := (others => '0');
-    signal s_luOp : STD_LOGIC_VECTOR(opCodeWidth - 1 downto 0) := (others => '0');
+    signal s_op1 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_op2 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res1 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res2 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res3 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res4 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res5 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res6 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res7 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_res8 : std_logic_vector(dataWidth - 1 downto 0) := (others => '0');
+    signal s_cin : std_logic := '0';
+    signal s_cout : std_logic := '0';
+    signal s_shiftType : std_logic := '0';
+    signal s_shiftDirection : std_logic := '0';
+    signal s_clk : std_logic := '0';
+    signal s_zeropadding : std_logic_vector(dataWidth - 1 downto 1) := (others => '0');
+    signal s_luOp : std_logic_vector(opCodeWidth - 1 downto 0) := (others => '0');
 
 begin
 
