@@ -19,85 +19,85 @@
 --
 -- ========================================================================
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
-USE work.constant_package.ALL;
-USE work.types_package.ALL;
-USE work.util_functions_package.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.constant_package.all;
+use work.types_package.all;
+use work.util_functions_package.all;
 
-ENTITY R_only_RISC_V_tb IS
-END ENTITY R_only_RISC_V_tb;
+entity R_only_RISC_V_tb is
+end entity R_only_RISC_V_tb;
 
-ARCHITECTURE structure OF R_only_RISC_V_tb IS
+architecture structure of R_only_RISC_V_tb is
 
-    CONSTANT PERIOD              : TIME                                      := 10 ns;
-    CONSTANT ADD_FOUR_TO_ADDRESS : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := STD_LOGIC_VECTOR(to_signed((4), WORD_WIDTH));
+    constant PERIOD              : time                                      := 10 ns;
+    constant ADD_FOUR_TO_ADDRESS : std_logic_vector(WORD_WIDTH - 1 downto 0) := std_logic_vector(to_signed((4), WORD_WIDTH));
     --signals
     --begin solution:
-    SIGNAL s_clk  : STD_LOGIC := '0';
-    SIGNAL s_clk2 : STD_LOGIC := '0';
-    SIGNAL s_rst  : STD_LOGIC := '0';
+    signal s_clk  : std_logic := '0';
+    signal s_clk2 : std_logic := '0';
+    signal s_rst  : std_logic := '0';
     --my_gen_n_bit_full_adder
-    SIGNAL s_carryIn_fa  : STD_LOGIC                                 := '0';
-    SIGNAL s_sum_fa      : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL s_carryOut_fa : STD_LOGIC                                 := '0';
+    signal s_carryIn_fa  : std_logic                                 := '0';
+    signal s_sum_fa      : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_carryOut_fa : std_logic                                 := '0';
     --pc
-    SIGNAL s_data_pc : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_pc : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --instruction_cache
-    SIGNAL s_adr_ic               : memory                                    := (OTHERS => (OTHERS => '0'));
-    SIGNAL s_instruction_ic       : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL s_instruction_cache_ic : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_adr_ic               : memory                                    := (others => (others => '0'));
+    signal s_instruction_ic       : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_instruction_cache_ic : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --if_id_instr
-    SIGNAL s_data_if_id_instr : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_if_id_instr : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --id_ex_rs
-    SIGNAL s_data_id_ex_rs : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_id_ex_rs : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     --ex_mem_rs
-    SIGNAL s_data_ex_mem_rs : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_ex_mem_rs : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     --mem_wb_rs
-    SIGNAL s_data_mem_wb_rs : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_mem_wb_rs : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     --decoder
-    SIGNAL s_control_word_decoder : controlWord := control_word_init;
+    signal s_control_word_decoder : controlWord := control_word_init;
     --id_ex_instr
-    SIGNAL s_data_id_ex_instr : controlWord := control_word_init;
+    signal s_data_id_ex_instr : controlWord := control_word_init;
     --ex_mem_instr
-    SIGNAL s_data_ex_mem_instr : controlWord := control_word_init;
+    signal s_data_ex_mem_instr : controlWord := control_word_init;
     --mem_wb_instr
-    SIGNAL s_data_mem_wb_instr : controlWord := control_word_init;
+    signal s_data_mem_wb_instr : controlWord := control_word_init;
     --register_file
-    SIGNAL s_read_reg_data1_register_file : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL s_read_reg_data2_register_file : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_read_reg_data1_register_file : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_read_reg_data2_register_file : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --id_ex_op1
-    SIGNAL s_data_id_ex_op1 : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_id_ex_op1 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --id_ex_op2
-    SIGNAL s_data_id_ex_op2 : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_id_ex_op2 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --my_alu
-    SIGNAL s_alu_out_my_alu   : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
-    SIGNAL s_carry_out_my_alu : STD_LOGIC                                 := '0';
+    signal s_alu_out_my_alu   : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_carry_out_my_alu : std_logic                                 := '0';
     --ex_mem_alures
-    SIGNAL s_data_ex_mem_alures : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_ex_mem_alures : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --mem_wb_alures
-    SIGNAL s_data_mem_wb_alures : STD_LOGIC_VECTOR(WORD_WIDTH - 1 DOWNTO 0) := (OTHERS => '0');
+    signal s_data_mem_wb_alures : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --end solution!!
-    SIGNAL s_registersOut : registerMemory := (OTHERS => (OTHERS => '0'));
-    SIGNAL s_instructions : memory         := (
-        4  => STD_LOGIC_VECTOR'("0" & OR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & OR_ALU_OP(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(10, REG_ADR_WIDTH)) & R_OP_INS),   -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        8  => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & R_OP_INS),  -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        12 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(11, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        16 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        24 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        28 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        32 => STD_LOGIC_VECTOR'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        36 => STD_LOGIC_VECTOR'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 DOWNTO 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
-        OTHERS => (OTHERS => '0')
+    signal s_registersOut : registerMemory := (others => (others => '0'));
+    signal s_instructions : memory         := (
+        4  => std_logic_vector'("0" & OR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & OR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(10, REG_ADR_WIDTH)) & R_OP_INS),   -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        8  => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(8, REG_ADR_WIDTH)) & R_OP_INS),  -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        12 => std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(11, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        16 => std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        24 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(8, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        28 => std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        32 => std_logic_vector'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        36 => std_logic_vector'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        others => (others => '0')
     );
 
-BEGIN
-    my_gen_n_bit_full_adder : ENTITY work.my_gen_n_bit_full_adder
-        GENERIC MAP(
+begin
+    my_gen_n_bit_full_adder : entity work.my_gen_n_bit_full_adder
+        generic map(
             WORD_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_OP1      => ADD_FOUR_TO_ADDRESS,
             pi_OP2      => s_data_pc,
             pi_carryIn  => s_carryIn_fa,
@@ -105,145 +105,145 @@ BEGIN
             po_carryOut => s_carryOut_fa
         );
 
-    pc : ENTITY work.gen_register
-        GENERIC MAP(
+    pc : entity work.gen_register
+        generic map(
             WORD_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_sum_fa,
             po_data => s_data_pc
         );
 
-    instruction_cache : ENTITY work.instruction_cache
-        GENERIC MAP(
+    instruction_cache : entity work.instruction_cache
+        generic map(
             ADR_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_adr              => s_data_pc,
             pi_clk              => s_clk,
             pi_instructionCache => s_instructions,
             po_instruction      => s_instruction_ic
         );
 
-    if_id_instr : ENTITY work.gen_register
-        GENERIC MAP(
+    if_id_instr : entity work.gen_register
+        generic map(
             WORD_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_instruction_ic,
             po_data => s_data_if_id_instr
         );
 
-    id_ex_rs : ENTITY work.gen_register
-        GENERIC MAP(
+    id_ex_rs : entity work.gen_register
+        generic map(
             REG_ADR_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
-            pi_data => s_data_if_id_instr(11 DOWNTO 7),
+            pi_data => s_data_if_id_instr(11 downto 7),
             po_data => s_data_id_ex_rs
         );
 
-    ex_mem_rs : ENTITY work.gen_register
-        GENERIC MAP(
+    ex_mem_rs : entity work.gen_register
+        generic map(
             REG_ADR_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_data_id_ex_rs,
             po_data => s_data_ex_mem_rs
         );
 
-    mem_wb_rs : ENTITY work.gen_register
-        GENERIC MAP(
+    mem_wb_rs : entity work.gen_register
+        generic map(
             REG_ADR_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_data_ex_mem_rs,
             po_data => s_data_mem_wb_rs
         );
 
-    decoder : ENTITY work.decoder
-        PORT MAP(
+    decoder : entity work.decoder
+        port map(
             pi_clk         => s_clk,
             pi_instruction => s_data_if_id_instr,
             po_controlWord => s_control_word_decoder
         );
 
-    id_ex_instr : ENTITY work.ControlWordRegister
-        PORT MAP(
+    id_ex_instr : entity work.ControlWordRegister
+        port map(
             pi_clk         => s_clk2,
             pi_rst         => s_rst,
             pi_controlWord => s_control_word_decoder,
             po_controlWord => s_data_id_ex_instr
         );
 
-    ex_mem_instr : ENTITY work.ControlWordRegister
-        PORT MAP(
+    ex_mem_instr : entity work.ControlWordRegister
+        port map(
             pi_clk         => s_clk2,
             pi_rst         => s_rst,
             pi_controlWord => s_data_id_ex_instr,
             po_controlWord => s_data_ex_mem_instr
         );
 
-    mem_wb_instr : ENTITY work.ControlWordRegister
-        PORT MAP(
+    mem_wb_instr : entity work.ControlWordRegister
+        port map(
             pi_clk         => s_clk2,
             pi_rst         => s_rst,
             pi_controlWord => s_data_ex_mem_instr,
             po_controlWord => s_data_mem_wb_instr
         );
 
-    register_file : ENTITY work.register_file
-        PORT MAP(
+    register_file : entity work.register_file
+        port map(
             pi_clk          => s_clk,
             pi_rst          => s_rst,
-            pi_readRegAddr1 => s_data_if_id_instr(19 DOWNTO 15),
-            pi_readRegAddr2 => s_data_if_id_instr(24 DOWNTO 20),
+            pi_readRegAddr1 => s_data_if_id_instr(19 downto 15),
+            pi_readRegAddr2 => s_data_if_id_instr(24 downto 20),
             pi_writeRegAddr => s_data_mem_wb_rs,
-            pi_writeEnable  => NOT(s_data_mem_wb_instr.IS_BRANCH),
+            pi_writeEnable  => not(s_data_mem_wb_instr.IS_BRANCH),
             pi_writeRegData => s_data_mem_wb_alures,
             po_readRegData1 => s_read_reg_data1_register_file,
             po_readRegData2 => s_read_reg_data2_register_file,
             po_registerOut  => s_registersOut
         );
 
-    id_ex_op1 : ENTITY work.gen_register
-        GENERIC MAP(
+    id_ex_op1 : entity work.gen_register
+        generic map(
             WORD_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_read_reg_data1_register_file,
             po_data => s_data_id_ex_op1
         );
 
-    id_ex_op2 : ENTITY work.gen_register
-        GENERIC MAP(
+    id_ex_op2 : entity work.gen_register
+        generic map(
             WORD_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_read_reg_data2_register_file,
             po_data => s_data_id_ex_op2
         );
 
-    my_alu : ENTITY work.my_alu
-        GENERIC MAP(
+    my_alu : entity work.my_alu
+        generic map(
             WORD_WIDTH,
             ALU_OPCODE_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_OP1      => s_data_id_ex_op1,
             pi_OP2      => s_data_id_ex_op2,
             pi_aluOp    => s_data_id_ex_instr.ALU_OP,
@@ -252,87 +252,87 @@ BEGIN
             po_carryOut => s_carry_out_my_alu
         );
 
-    ex_mem_alures : ENTITY work.gen_register
-        GENERIC MAP(
+    ex_mem_alures : entity work.gen_register
+        generic map(
             WORD_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_alu_out_my_alu,
             po_data => s_data_ex_mem_alures
         );
 
-    ex_wb_alures : ENTITY work.gen_register
-        GENERIC MAP(
+    ex_wb_alures : entity work.gen_register
+        generic map(
             WORD_WIDTH
         )
-        PORT MAP(
+        port map(
             pi_clk  => s_clk2,
             pi_rst  => s_rst,
             pi_data => s_data_ex_mem_alures,
             po_data => s_data_mem_wb_alures
         );
 
-    PROCESS IS
-    BEGIN
+    process is
+    begin
         s_clk <= '0';
-        WAIT FOR PERIOD / 2;
+        wait for PERIOD / 2;
 
-        FOR i IN 0 TO 14 LOOP
+        for i in 0 to 14 loop
             s_clk <= '1';
-            WAIT FOR PERIOD / 2;
+            wait for PERIOD / 2;
             s_clk <= '0';
-            WAIT FOR PERIOD / 2;
+            wait for PERIOD / 2;
 
-            IF (i = 5) THEN -- after 5 clock clock cycles
-                ASSERT (to_integer(signed(s_registersOut(10))) = 9)
-                REPORT "OR-Operation failed. Register 10 contains " & INTEGER'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & INTEGER'image(9) & " after cycle 4"
-                    SEVERITY error;
-            END IF;
+            if (i = 5) then -- after 5 clock clock cycles
+                assert (to_integer(signed(s_registersOut(10))) = 9)
+                report "OR-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(9) & " after cycle 4"
+                    severity error;
+            end if;
 
-            IF (i = 6) THEN -- after 6 clock clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(8))) = 17)
-                REPORT "ADD-Operation failed. Register 8 contains " & INTEGER'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & INTEGER'image(17) & " after cycle 5"
-                    SEVERITY error;
-            END IF;
+            if (i = 6) then -- after 6 clock clock cycles, the pi_first result should be written to the RF
+                assert (to_integer(signed(s_registersOut(8))) = 17)
+                report "ADD-Operation failed. Register 8 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) & " after cycle 5"
+                    severity error;
+            end if;
 
-            IF (i = 7) THEN -- after 6 clock clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(11))) = 1)
-                REPORT "SUB-Operation failed. Register 11 contains " & INTEGER'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & INTEGER'image(1) & " after cycle 6"
-                    SEVERITY error;
-            END IF;
+            if (i = 7) then -- after 6 clock clock cycles, the pi_first result should be written to the RF
+                assert (to_integer(signed(s_registersOut(11))) = 1)
+                report "SUB-Operation failed. Register 11 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(1) & " after cycle 6"
+                    severity error;
+            end if;
 
-            IF (i = 9) THEN -- after 8 clock clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(12))) = 1)
-                REPORT "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(1) & " after cycle 8"
-                    SEVERITY error;
+            if (i = 9) then -- after 8 clock clock cycles, the pi_first result should be written to the RF
+                assert (to_integer(signed(s_registersOut(12))) = 1)
+                report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(1) & " after cycle 8"
+                    severity error;
 
-            END IF;
-            IF (i = 10) THEN -- after 7 clock clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(12))) = 25)
-                REPORT "ADD-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(25) & " after cycle 7"
-                    SEVERITY error;
-            END IF;
+            end if;
+            if (i = 10) then -- after 7 clock clock cycles, the pi_first result should be written to the RF
+                assert (to_integer(signed(s_registersOut(12))) = 25)
+                report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) & " after cycle 7"
+                    severity error;
+            end if;
 
-            IF (i = 11) THEN -- after 9 clock clock cycles, the pi_first result should be written to the RF
-                ASSERT (to_integer(signed(s_registersOut(12))) =- 1)
-                REPORT "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(-1) & " after cycle 8"
-                    SEVERITY error;
-            END IF;
-        END LOOP;
-        REPORT "End of test!!!";
-        WAIT;
-    END PROCESS;
-    PROCESS IS
-    BEGIN
-        WAIT FOR PERIOD / 4;
-        FOR i IN 0 TO 200 LOOP
+            if (i = 11) then -- after 9 clock clock cycles, the pi_first result should be written to the RF
+                assert (to_integer(signed(s_registersOut(12))) =- 1)
+                report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) & " after cycle 8"
+                    severity error;
+            end if;
+        end loop;
+        report "End of test!!!";
+        wait;
+    end process;
+    process is
+    begin
+        wait for PERIOD / 4;
+        for i in 0 to 200 loop
             s_clk2 <= '0';
-            WAIT FOR PERIOD / 2;
+            wait for PERIOD / 2;
             s_clk2 <= '1';
-            WAIT FOR PERIOD / 2;
-        END LOOP;
-        WAIT;
-    END PROCESS;
-END ARCHITECTURE;
+            wait for PERIOD / 2;
+        end loop;
+        wait;
+    end process;
+end architecture;

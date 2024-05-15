@@ -31,74 +31,63 @@ end entity R_I_only_RISC_V_tb;
 
 architecture structure of R_I_only_RISC_V_tb is
 
-    constant PERIOD : TIME := 10 ns;
-    constant ADD_FOUR_TO_ADDRESS : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := STD_LOGIC_VECTOR(to_signed((4), WORD_WIDTH));
+    constant PERIOD              : time                                      := 10 ns;
+    constant ADD_FOUR_TO_ADDRESS : std_logic_vector(WORD_WIDTH - 1 downto 0) := std_logic_vector(to_signed((4), WORD_WIDTH));
     --signals
     --begin solution:
-    signal s_clk : STD_LOGIC := '0';
-    signal s_clk2 : STD_LOGIC := '0';
-    signal s_rst : STD_LOGIC := '0';
-    --my_gen_n_bit_full_adder
-    signal s_carryIn_fa : STD_LOGIC := '0';
-    signal s_sum_fa : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_carryOut_fa : STD_LOGIC := '0';
-    --pc
-    signal s_pc_out : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    --instruction_cache
-    signal s_instruction_cache_out : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    --if_id_instr
-    signal s_decoder_in : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    --id_ex_rs
-    signal s_data_id_ex_rs : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
-    --ex_mem_rs
-    signal s_data_ex_mem_rs : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
-    --mem_wb_rs
-    signal s_writeRegAddr : STD_LOGIC_VECTOR(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+    signal s_clk  : std_logic := '0';
+    signal s_clk2 : std_logic := '0';
+    signal s_rst  : std_logic := '0';
+    --PC
+    signal s_pcIn_carryIn : std_logic                                 := '0';
+    signal s_pc_sum       : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_pcOut        : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    --Instruction Cache
+    signal s_instructionCache : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_instrCache_out   : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    --rs Registers
+    signal s_id_ex_rs     : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+    signal s_ex_mem_rs    : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+    signal s_writeRegAddr : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     --decoder
     signal s_decoder_out : controlWord := control_word_init;
-    --id_ex_instr
-    signal s_data_id_ex_instr : controlWord := control_word_init;
-    --ex_mem_instr
-    signal s_data_ex_mem_instr : controlWord := control_word_init;
-    --mem_wb_instr
-    signal s_data_mem_wb_instr : controlWord := control_word_init;
+    --instr Registers
+    signal s_id_ex_instr  : controlWord := control_word_init;
+    signal s_ex_mem_instr : controlWord := control_word_init;
+    signal s_mem_wb_instr : controlWord := control_word_init;
     --register_file
-    signal s_read_reg_data1_register_file : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_read_reg_data2_register_file : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    --id_ex_op1
-    signal s_data_id_ex_op1 : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    --id_ex_op2
-    signal s_data_id_ex_op2 : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    --my_alu
-    signal s_alu_out_my_alu : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_carry_out_my_alu : STD_LOGIC := '0';
-    --ex_mem_alures
-    signal s_data_ex_mem_alures : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    --mem_wb_alures
-    signal s_data_mem_wb_alures : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_readRegData1 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_readRegData2 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_aluIn_op1    : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_rs2_out      : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    --ALU
+    signal s_alu_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    --ALU Registers
+    signal s_ex_mem_alures : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_writeRegData  : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --immediate specific
-    signal s_immediate_register : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_aluIn_op2 : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_extended_immediate : STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_signExtender_out   : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_aluIn_op2          : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_extended_immediate : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --end solution!!
     signal s_registersOut : registerMemory := (others => (others => '0'));
-    signal s_instructions : memory := (
-        4 => STD_LOGIC_VECTOR'("000000001001" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & I_OP_INS),
-        8 => STD_LOGIC_VECTOR'("000000001000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & I_OP_INS),
+    signal s_instructions : memory         := (
+        4 => std_logic_vector'("000000001001" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & I_OP_INS),
+        8 => std_logic_vector'("000000001000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & I_OP_INS),
 
-        24 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        24 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(8, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        28 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(11, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        28 => std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(11, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        32 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        32 => std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        36 => STD_LOGIC_VECTOR'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(8, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        36 => std_logic_vector'("0" & ADD_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(8, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        40 => STD_LOGIC_VECTOR'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        40 => std_logic_vector'("0" & SUB_OP_ALU (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & SUB_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        44 => STD_LOGIC_VECTOR'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        44 => std_logic_vector'("0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
 
-        48 => STD_LOGIC_VECTOR'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & STD_LOGIC_VECTOR(to_unsigned(2, REG_ADR_WIDTH)) & STD_LOGIC_VECTOR(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & STD_LOGIC_VECTOR(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+        48 => std_logic_vector'("0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_OP_INS), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
         others => (others => '0')
     );
 
@@ -109,11 +98,10 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_OP1 => ADD_FOUR_TO_ADDRESS,
-            pi_OP2 => s_pc_out,
-            pi_carryIn => s_carryIn_fa,
-            po_sum => s_sum_fa,
-            po_carryOut => s_carryOut_fa
+            pi_OP1     => ADD_FOUR_TO_ADDRESS,
+            pi_OP2     => s_pcOut,
+            pi_carryIn => s_pcIn_carryIn,
+            po_sum     => s_pc_sum
         );
 
     pc : entity work.gen_register
@@ -121,10 +109,10 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_sum_fa,
-            po_data => s_pc_out
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_pc_sum,
+            po_data => s_pcOut
         );
     --End of PC
     --Instruction Cache
@@ -133,10 +121,10 @@ begin
             ADR_WIDTH
         )
         port map(
-            pi_adr => s_pc_out,
-            pi_clk => s_clk,
+            pi_adr              => s_pcOut,
+            pi_clk              => s_clk,
             pi_instructionCache => s_instructions,
-            po_instruction => s_instruction_cache_out
+            po_instruction      => s_instructionCache
         );
 
     --Instruction Cache -> Decoder and Registerfile
@@ -145,35 +133,35 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_instruction_cache_out,
-            po_data => s_decoder_in
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_instructionCache,
+            po_data => s_instrCache_out
         );
     --End of Instrucion Cache
     --Decoder
     decoder : entity work.decoder
         port map(
-            pi_clk => s_clk,
-            pi_instruction => s_decoder_in,
+            pi_clk         => s_clk,
+            pi_instruction => s_instrCache_out,
             po_controlWord => s_decoder_out
         );
     -- End of Decoder
     --Immediate Register
+    immediate_sign_extender : entity work.sign_extender
+        port map(
+            pi_instr      => s_instrCache_out,
+            po_iImmediate => s_signExtender_out
+        );
     immediate_register : entity work.gen_register
         generic map(
             WORD_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_immediate_register,
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_signExtender_out,
             po_data => s_extended_immediate
-        );
-    immediate_sign_extender : entity work.sign_extender
-        port map(
-            pi_instr => s_decoder_in,
-            po_iImmediate => s_immediate_register
         );
     --End of Immediate Register
     --2nd Clock Cylce after Instruction Fetch
@@ -182,18 +170,18 @@ begin
             REG_ADR_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_decoder_in(11 downto 7),
-            po_data => s_data_id_ex_rs
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_instrCache_out(11 downto 7),
+            po_data => s_id_ex_rs
         );
 
     id_ex_instr : entity work.ControlWordRegister
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
+            pi_clk         => s_clk2,
+            pi_rst         => s_rst,
             pi_controlWord => s_decoder_out,
-            po_controlWord => s_data_id_ex_instr
+            po_controlWord => s_id_ex_instr
         );
     --End of 2nd Clock Cycle after Instruction Fetch
     --3rd Clock Cycle after Instruction Fetch
@@ -202,17 +190,17 @@ begin
             REG_ADR_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_data_id_ex_rs,
-            po_data => s_data_ex_mem_rs
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_id_ex_rs,
+            po_data => s_ex_mem_rs
         );
     ex_mem_instr : entity work.ControlWordRegister
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_controlWord => s_data_id_ex_instr,
-            po_controlWord => s_data_ex_mem_instr
+            pi_clk         => s_clk2,
+            pi_rst         => s_rst,
+            pi_controlWord => s_id_ex_instr,
+            po_controlWord => s_ex_mem_instr
         );
     --End of 3rd Clock Cycle after Instruction Fetch
     --4th Clock Cycle after Instruction Fetch
@@ -221,32 +209,32 @@ begin
             REG_ADR_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_data_ex_mem_rs,
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_ex_mem_rs,
             po_data => s_writeRegAddr
         );
     mem_wb_instr : entity work.ControlWordRegister
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_controlWord => s_data_ex_mem_instr,
-            po_controlWord => s_data_mem_wb_instr
+            pi_clk         => s_clk2,
+            pi_rst         => s_rst,
+            pi_controlWord => s_ex_mem_instr,
+            po_controlWord => s_mem_wb_instr
         );
     --End of 4th Clock Cycle after Instruction Fetch
     --Registerfile
     register_file : entity work.register_file
         port map(
-            pi_clk => s_clk,
-            pi_rst => s_rst,
-            pi_readRegAddr1 => s_decoder_in(19 downto 15),
-            pi_readRegAddr2 => s_decoder_in(24 downto 20),
+            pi_clk          => s_clk,
+            pi_rst          => s_rst,
+            pi_readRegAddr1 => s_instrCache_out(19 downto 15),
+            pi_readRegAddr2 => s_instrCache_out(24 downto 20),
             pi_writeRegAddr => s_writeRegAddr,
-            pi_writeEnable => not(s_decoder_out.IS_BRANCH),
-            pi_writeRegData => s_data_mem_wb_alures,
-            po_readRegData1 => s_read_reg_data1_register_file,
-            po_readRegData2 => s_read_reg_data2_register_file,
-            po_registerOut => s_registersOut
+            pi_writeEnable  => not(s_decoder_out.IS_BRANCH),
+            pi_writeRegData => s_writeRegData,
+            po_readRegData1 => s_readRegData1,
+            po_readRegData2 => s_readRegData2,
+            po_registerOut  => s_registersOut
         );
 
     id_ex_op1 : entity work.gen_register
@@ -254,10 +242,10 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_read_reg_data1_register_file,
-            po_data => s_data_id_ex_op1
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_readRegData1,
+            po_data => s_aluIn_op1
         );
     --Type Selector
     type_selector : entity work.gen_mux
@@ -265,20 +253,20 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_first => s_data_id_ex_op2,
-            pi_second => s_extended_immediate,
-            pi_selector => s_data_id_ex_instr.I_IMM_SEL,
-            po_output => s_aluIn_op2
+            pi_first    => s_rs2_out,
+            pi_second   => s_extended_immediate,
+            pi_selector => s_id_ex_instr.I_IMM_SEL,
+            po_output   => s_aluIn_op2
         );
     id_ex_op2 : entity work.gen_register
         generic map(
             WORD_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_read_reg_data2_register_file,
-            po_data => s_data_id_ex_op2
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_readRegData2,
+            po_data => s_rs2_out
         );
     --End of Registerfile
     --ALU
@@ -288,12 +276,11 @@ begin
             ALU_OPCODE_WIDTH
         )
         port map(
-            pi_OP1 => s_data_id_ex_op1,
-            pi_OP2 => s_aluIn_op2,
-            pi_aluOp => s_data_id_ex_instr.ALU_OP,
-            pi_clk => s_clk,
-            po_aluOut => s_alu_out_my_alu,
-            po_carryOut => s_carry_out_my_alu
+            pi_OP1    => s_aluIn_op1,
+            pi_OP2    => s_aluIn_op2,
+            pi_aluOp  => s_id_ex_instr.ALU_OP,
+            pi_clk    => s_clk,
+            po_aluOut => s_alu_out
         );
 
     ex_mem_alures : entity work.gen_register
@@ -301,10 +288,10 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_alu_out_my_alu,
-            po_data => s_data_ex_mem_alures
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_alu_out,
+            po_data => s_ex_mem_alures
         );
 
     ex_wb_alures : entity work.gen_register
@@ -312,10 +299,10 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_clk => s_clk2,
-            pi_rst => s_rst,
-            pi_data => s_data_ex_mem_alures,
-            po_data => s_data_mem_wb_alures
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_ex_mem_alures,
+            po_data => s_writeRegData
         );
     --End of ALU
     process is
@@ -331,43 +318,43 @@ begin
 
             if (i = 5) then
                 assert (to_integer(signed(s_registersOut(1))) = 9)
-                report "ADDI-Operation failed. Register 1 contains " & INTEGER'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & INTEGER'image(9) & " after cycle 5"
+                report "ADDI-Operation failed. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & integer'image(9) & " after cycle 5"
                     severity error;
             end if;
 
             if (i = 6) then
                 assert (to_integer(signed(s_registersOut(2))) = 8)
-                report "ADDI-Operation failed. Register 2 contains " & INTEGER'image(to_integer(signed(s_registersOut(2)))) & " but should contain " & INTEGER'image(8) & " after cycle 6"
+                report "ADDI-Operation failed. Register 2 contains " & integer'image(to_integer(signed(s_registersOut(2)))) & " but should contain " & integer'image(8) & " after cycle 6"
                     severity error;
             end if;
 
             if (i = 10) then
                 assert (to_integer(signed(s_registersOut(8))) = 17)
-                report "ADD-Operation failed. Register 8 contains " & INTEGER'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & INTEGER'image(17) & " after cycle 10"
+                report "ADD-Operation failed. Register 8 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) & " after cycle 10"
                     severity error;
             end if;
 
             if (i = 11) then
                 assert (to_integer(signed(s_registersOut(11))) = 1)
-                report "SUB-Operation failed. Register 11 contains " & INTEGER'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & INTEGER'image(1) & " after cycle 6"
+                report "SUB-Operation failed. Register 11 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(1) & " after cycle 6"
                     severity error;
             end if;
 
             if (i = 12) then
                 assert (to_integer(signed(s_registersOut(12))) = 1)
-                report "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(1) & " after cycle 8"
+                report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(1) & " after cycle 8"
                     severity error;
 
             end if;
             if (i = 13) then
                 assert (to_integer(signed(s_registersOut(12))) = 25)
-                report "ADD-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(25) & " after cycle 7"
+                report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) & " after cycle 7"
                     severity error;
             end if;
 
             if (i = 14) then
                 assert (to_integer(signed(s_registersOut(12))) =- 1)
-                report "SUB-Operation failed. Register 12 contains " & INTEGER'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & INTEGER'image(-1) & " after cycle 8"
+                report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) & " after cycle 8"
                     severity error;
             end if;
         end loop;
