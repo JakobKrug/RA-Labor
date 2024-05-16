@@ -23,7 +23,6 @@ package types_package is
   type controlword is record
     ALU_OP     : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0); -- determines the ALU's operation
     I_IMM_SEL  : std_logic;                                       -- used as a MUX selector for i-Format Immediates
-    U_IMM_SEL  : std_logic;                                       -- used as a MUX selector for u-Format Immediates
     PC_SEL : std_logic;                                           -- used as a MUX selector to set the PC (only for jalr)
     A_SEL : std_logic; 
     WB_SEL     : std_logic_vector(1 downto 0);                                       -- used as a MUX selector 
@@ -37,7 +36,6 @@ package types_package is
   (
     ALU_OP     => (others => '0'),
     I_IMM_SEL    => '0',
-    U_IMM_SEL    => '0',
     PC_SEL     => '0',
     A_SEL => '0',
     WB_SEL     => "00", 
