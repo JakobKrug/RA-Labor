@@ -162,7 +162,7 @@ begin
         port map(
             pi_first    => s_typeSelector_out,
             pi_second   => s_pc_of,
-            pi_selector => s_id_ex_instr.I_IMM_SEL,
+            pi_selector => s_ex_mem_instr.I_IMM_SEL,
             po_output => s_aluIn_op2
         );
     --Instruction Cache
