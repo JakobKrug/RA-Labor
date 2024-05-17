@@ -69,12 +69,17 @@ architecture structure of riu_only_RISC_V_tb is
     signal s_signExtender_out   : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_signExtenderI_out  : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_signExtenderU_out  : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_aluIn_op2          : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_typeSelector_out   : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_extended_immediate : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --U-Type specific
     signal s_extended_immediate_wb1 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_extended_immediate_wb2 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_alu_wb                 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    --AUIPC
+    signal s_pc_if     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_pc_id     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_pc_of     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_aluIn_op2 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     --end solution!!
     signal s_registersOut : registerMemory := (others => (others => '0'));
     signal s_instructions : memory         := (
@@ -117,6 +122,49 @@ begin
             po_data => s_pcOut
         );
     --End of PC
+    --AUIPC
+    --Registers which hold PC+4 up to EX
+    auipc_if : entity work.gen_register
+        generic map(
+            WORD_WIDTH
+        )
+        port map(
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_pcOut,
+            po_data => s_pc_if
+        );
+    auipc_id : entity work.gen_register
+        generic map(
+            WORD_WIDTH
+        )
+        port map(
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_pc_if,
+            po_data => s_pc_id
+        );
+    auipc_of : entity work.gen_register
+        generic map(
+            WORD_WIDTH
+        )
+        port map(
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_pc_if,
+            po_data => s_pc_of
+        );
+    --MUX decides between PC+4 and aluop2 using
+    auipc_mux : entity work.gen_mux
+        generic map(
+            WORD_WIDTH
+        )
+        port map(
+            pi_first    => s_typeSelector_out,
+            pi_second   => s_pc_of,
+            pi_selector => s_id_ex_instr.I_IMM_SEL,
+            po_output => s_aluIn_op2
+        );
     --Instruction Cache
     instruction_cache : entity work.instruction_cache
         generic map(
@@ -203,24 +251,22 @@ begin
             WORD_WIDTH
         )
         port map(
-            pi_clk      => s_clk,
-            pi_rst      => s_rst,
             pi_first    => s_ex_mem_alures,
             pi_second   => s_extended_immediate_wb1,
-            pi_selector => mem_wb_instr.U_IMM_SEL,
+            pi_selector => s_ex_mem_instr.WB_SEL,
             po_output   => s_alu_wb
+        );
+    --2nd Clock Cylce after Instruction Fetch
+    id_ex_rs : entity work.gen_register
+        generic map(
+            REG_ADR_WIDTH
         )
-        --2nd Clock Cylce after Instruction Fetch
-        id_ex_rs : entity work.gen_register
-            generic map(
-                REG_ADR_WIDTH
-            )
-            port map(
-                pi_clk  => s_clk2,
-                pi_rst  => s_rst,
-                pi_data => s_instrCache_out(11 downto 7),
-                po_data => s_id_ex_rs
-            );
+        port map(
+            pi_clk  => s_clk2,
+            pi_rst  => s_rst,
+            pi_data => s_instrCache_out(11 downto 7),
+            po_data => s_id_ex_rs
+        );
 
     id_ex_instr : entity work.ControlWordRegister
         port map(
@@ -302,7 +348,7 @@ begin
             pi_first    => s_rs2_out,
             pi_second   => s_extended_immediate,
             pi_selector => s_id_ex_instr.I_IMM_SEL,
-            po_output   => s_aluIn_op2
+            po_output   => s_typeSelector_out
         );
     id_ex_op2 : entity work.gen_register
         generic map(

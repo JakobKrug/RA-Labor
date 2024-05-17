@@ -15,6 +15,7 @@ ghdl -a --std=08 ../../Komponenten/ALU/my_gen_or.vhdl
 ghdl -a --std=08 ../../Komponenten/ALU/my_gen_and.vhdl
 ghdl -a --std=08 ../../Komponenten/ALU/my_alu.vhdl
 ghdl -a --std=08 ../../Komponenten/MUX/gen_mux.vhdl
+ghdl -a --std=08 ../../Komponenten/MUX/gen_mux4.vhdl
 ghdl -a --std=08 ../../Komponenten/SignExtender/sign_extender.vhdl
 
 #Decoder
