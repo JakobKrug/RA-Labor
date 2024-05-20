@@ -99,6 +99,9 @@ architecture structure of riu_only_RISC_V_tb is
     );
 
 begin
+    process(s_registersOut) begin
+        report (to_string(s_registersOut(2)));
+    end process;
     --PC
     my_gen_n_bit_full_adder : entity work.my_gen_n_bit_full_adder
         generic map(
@@ -234,16 +237,16 @@ begin
             po_data => s_extended_immediate_wb1
         );
 
-    immediate_register_2 : entity work.gen_register
-        generic map(
-            WORD_WIDTH
-        )
-        port map(
-            pi_clk  => s_clk2,
-            pi_rst  => s_rst,
-            pi_data => s_extended_immediate_wb1,
-            po_data => s_extended_immediate_wb2
-        );
+    -- immediate_register_2 : entity work.gen_register
+    --     generic map(
+    --         WORD_WIDTH
+    --     )
+    --     port map(
+    --         pi_clk  => s_clk2,
+    --         pi_rst  => s_rst,
+    --         pi_data => s_extended_immediate_wb1,
+    --         po_data => s_extended_immediate_wb2
+    --     );
     --End of Immediate Register
     --Immediate Selector
     immediate_selector : entity work.gen_mux4
@@ -252,8 +255,9 @@ begin
         )
         port map(
             pi_first    => s_ex_mem_alures,
-            pi_second   => s_extended_immediate_wb1,
-            pi_selector => s_ex_mem_instr.WB_SEL,
+            pi_second   => s_ex_mem_alures,
+            -- pi_second   => s_extended_immediate_wb1,
+            pi_selector => s_id_ex_instr.WB_SEL,
             po_output   => s_alu_wb
         );
     --2nd Clock Cylce after Instruction Fetch
@@ -347,7 +351,7 @@ begin
         port map(
             pi_first    => s_rs2_out,
             pi_second   => s_extended_immediate,
-            pi_selector => s_id_ex_instr.I_IMM_SEL,
+            pi_selector => s_ex_mem_instr.I_IMM_SEL,
             po_output   => s_typeSelector_out
         );
     id_ex_op2 : entity work.gen_register
@@ -369,7 +373,7 @@ begin
         )
         port map(
             pi_OP1    => s_aluIn_op1,
-            pi_OP2    => s_aluIn_op2,
+            pi_OP2    => s_typeSelector_out,
             pi_aluOp  => s_id_ex_instr.ALU_OP,
             pi_clk    => s_clk,
             po_aluOut => s_alu_out
