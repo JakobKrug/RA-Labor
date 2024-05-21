@@ -17,9 +17,9 @@ entity decoder is
     --     WORD_WIDTH : integer := WORD_WIDTH
     -- );
     port (
-        pi_clk         : in std_logic                                 := '0';
-        pi_instruction : in std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-        po_controlWord : out controlWord                              := control_word_init
+        pi_clk : in STD_LOGIC := '0';
+        pi_instruction : in STD_LOGIC_VECTOR(WORD_WIDTH - 1 downto 0) := (others => '0');
+        po_controlWord : out controlWord := control_word_init
     );
     -- end solution!!
 end entity decoder;
@@ -31,42 +31,77 @@ begin
     begin
         if rising_edge(pi_clk) then
             case pi_instruction(OPCODE_WIDTH - 1 downto 0) is
-                when R_OP_INS   => v_insFormat   := rFormat;
-                when I_OP_INS   => v_insFormat   := iFormat;
+                when R_OP_INS => v_insFormat := rFormat;
+                when I_OP_INS => v_insFormat := iFormat;
                 when LUI_OP_INS => v_insFormat := uFormat;
-                when others     => v_insFormat     := nullFormat;
+                when AUIPC_OP_INS => v_insFormat := uFormat;
+                when JAL_OP_INS => v_insFormat := jFormat;
+                when JALR_OP_INS => v_insFormat := jFormat;
+                when others => v_insFormat := nullFormat;
             end case;
 
             case v_insFormat is
-                when rFormat => po_controlWord.ALU_OP <= pi_instruction(30) & pi_instruction(14 downto 12);
-                when iFormat => po_controlWord        <= (
-                    ALU_OP       => pi_instruction(30) & pi_instruction(14 downto 12),
-                    I_IMM_SEL    => '1',
-                    -- J_IMM_SEL    => '0',
-                    U_IMM_SEL    => '0',
-                    -- SET_PC_SEL   => '0',
-                    PC_SEL     => '0',
-                    A_SEL      => '0',
-                    WB_SEL     => "00",
-                    IS_BRANCH  => '0',
+                when rFormat => po_controlWord <= (
+                    ALU_OP => pi_instruction(30) & pi_instruction(14 downto 12),
+                    I_IMM_SEL => '0',
+                    J_IMM_SEL => '0',
+                    U_IMM_SEL => '0',
+                    SET_PC_SEL => '0',
+                    PC_SEL => '0',
+                    A_SEL => '0',
+                    WB_SEL => "00",
+                    IS_BRANCH => '0',
+                    CMP_RESULT => '0',
+                    DATA_CONTROL => (others => '0')
+                    );
+                when iFormat => po_controlWord <= (
+                    ALU_OP => pi_instruction(30) & pi_instruction(14 downto 12),
+                    I_IMM_SEL => '1',
+                    J_IMM_SEL => '0',
+                    U_IMM_SEL => '0',
+                    SET_PC_SEL => '0',
+                    PC_SEL => '0',
+                    A_SEL => '0',
+                    WB_SEL => "00",
+                    IS_BRANCH => '0',
                     CMP_RESULT => '0',
                     DATA_CONTROL => (others => '0')
                     );
                 when uFormat => po_controlWord <= (
-                    ALU_OP       => ADD_OP_ALU,
-                    I_IMM_SEL    => '1',
-                    -- J_IMM_SEL    => '0',
-                    U_IMM_SEL    => '0',
-                    -- SET_PC_SEL   => '0',
-                    PC_SEL     => '0',
-                    A_SEL      => '0',
-                    WB_SEL     => "10",
-                    IS_BRANCH  => '0',
+                    ALU_OP => ADD_OP_ALU,
+                    I_IMM_SEL => '1',
+                    J_IMM_SEL => '0',
+                    U_IMM_SEL => '0',
+                    SET_PC_SEL => '0',
+                    PC_SEL => '0',
+                    A_SEL => '0',
+                    WB_SEL => "00",
+                    IS_BRANCH => '0',
+                    CMP_RESULT => '0',
+                    DATA_CONTROL => (others => '0')
+                    );
+                when jFormat => po_controlWord <= (
+                    ALU_OP => ADD_OP_ALU,
+                    I_IMM_SEL => '1',
+                    J_IMM_SEL => '0',
+                    U_IMM_SEL => '0',
+                    SET_PC_SEL => '0',
+                    PC_SEL => '1',
+                    A_SEL => '0',
+                    WB_SEL => "10",
+                    IS_BRANCH => '0',
                     CMP_RESULT => '0',
                     DATA_CONTROL => (others => '0')
                     );
                 when others => po_controlWord <= control_word_init;
             end case;
+            if pi_instruction(OPCODE_WIDTH - 1 downto 0) = LUI_OP_INS then
+                po_controlWord.WB_SEL <= "01";
+            elsif pi_instruction(OPCODE_WIDTH - 1 downto 0) = AUIPC_OP_INS then
+                po_controlWord.A_SEL <= '1';
+            elsif pi_instruction(OPCODE_WIDTH - 1 downto 0) = JAL_OP_INS then
+                po_controlWord.A_SEL <= '1';
+            end if;
         end if;
     end process;
     -- end solution!!

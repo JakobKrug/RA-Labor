@@ -33,5 +33,5 @@ ghdl -a --std=08 ../../Komponenten/Register/ControlWordRegister.vhdl
 
 ghdl -a  --std=08 riu_only_RISC_V_tb.vhdl
 ghdl -e  --std=08 riu_only_RISC_V_tb
-ghdl -r  --std=08 riu_only_RISC_V_tb --stop-time=200ns --vcd=vcd_riu.vcd
+ghdl -r  --std=08 riu_only_RISC_V_tb --stop-time=10ms --vcd=vcd_riu.vcd
 #gtkwave ri_only_risc_v.vcd

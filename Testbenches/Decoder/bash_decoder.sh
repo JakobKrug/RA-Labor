@@ -8,4 +8,4 @@ ghdl -a --std=08 ../../Komponenten/Decoder/decoder.vhdl
 
 ghdl -a --std=08 decoder_tb.vhdl
 ghdl -e --std=08 decoder_tb
-ghdl -r --std=08 decoder_tb --stop-time=200ns --vcd=decoder_tb.vcd
+ghdl -r --std=08 decoder_tb --vcd=decoder_tb.vcd
