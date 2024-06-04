@@ -2,8 +2,8 @@
 -- Sommersemester 24
 -- Group Details
 -- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
+-- 1. Participant First and Last Name: Jakob Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 -- coding conventions
 -- g_<name> Generics
 -- p_<name> Ports
@@ -30,8 +30,8 @@ entity ControlWordRegister is
     port (
         pi_rst         : in std_logic;
         pi_clk         : in std_logic;
-        pi_controlWord : in controlWord  := CONTROL_WORD_INIT; -- incoming control word
-        po_controlWord : out controlWord := CONTROL_WORD_INIT  -- outgoing control word
+        pi_controlWord : in controlWord  := CONTROL_WORD_INIT;
+        po_controlWord : out controlWord := CONTROL_WORD_INIT
     );
 end ControlWordRegister;
 
@@ -43,10 +43,8 @@ begin
 
     begin
 
-        if (pi_rst) then
-            s_controlWord <= CONTROL_WORD_INIT;
-        elsif rising_edge (pi_clk) then
-            s_controlWord <= pi_controlWord; -- update register contents on falling clock edge
+        if (pi_rst) then s_controlWord                <= CONTROL_WORD_INIT;
+        elsif rising_edge (pi_clk) then s_controlWord <= pi_controlWord;
         end if;
     end process;
 
