@@ -45,7 +45,7 @@ begin
 
         if (pi_rst) then
             s_controlWord <= CONTROL_WORD_INIT;
-        elsif falling_edge (pi_clk) then
+        elsif rising_edge (pi_clk) then
             s_controlWord <= pi_controlWord; -- update register contents on falling clock edge
         end if;
     end process;

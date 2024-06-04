@@ -1,17 +1,5 @@
--- Laboratory RA solutions/versuch1
--- Sommersemester 24
--- Group Details
--- Lab Date: 23.04.2024
--- 1. Participant First and Last Name: Jakob Benedikt Krug
+-- 1. Participant First and Last Name: Jakob Krug
 -- 2. Participant First and Last Name: Nicolas Schmidt
-
--- ========================================================================
--- Author:       Marcel Rieß, with additions by Niklas Gutsmiedl
--- Last updated: 19.03.2024
--- Description:  Generic ALU used in the RV Processor. Simultaneously
---               computes results for the following operations, in one clock
---               cyle: add, sub, and, or, xor, sll, srl, sra, slt, sltu, eq
--- ========================================================================
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -27,9 +15,9 @@ entity my_alu is
     port (
         pi_op1, pi_op2 : in std_logic_vector(dataWidth - 1 downto 0);
         pi_aluOp       : in std_logic_vector (opCodeWidth - 1 downto 0);
-        pi_clk         : in std_logic;
         po_aluOut      : out std_logic_vector (dataWidth - 1 downto 0);
-        po_carryOut    : out std_logic
+        po_carryOut    : out std_logic;
+        po_zero        : out std_logic
     );
     -- end solution!!
 end entity my_alu;
@@ -50,12 +38,10 @@ architecture behavior of my_alu is
     signal s_cout           : std_logic                                  := '0';
     signal s_shiftType      : std_logic                                  := '0';
     signal s_shiftDirection : std_logic                                  := '0';
-    signal s_clk            : std_logic                                  := '0';
     signal s_zeropadding    : std_logic_vector(dataWidth - 1 downto 1)   := (others => '0');
     signal s_luOp           : std_logic_vector(opCodeWidth - 1 downto 0) := (others => '0');
 
 begin
-
     xor1 : entity work.my_gen_xor
         generic map(
             dataWidth
@@ -110,159 +96,41 @@ begin
             s_cout
         );
 
-    s_clk <= pi_clk;
+    s_op1 <= pi_op1;
+    s_op2 <= pi_op2;
 
-    process (s_clk) is
-    begin
+    s_cin <= '1' when pi_aluOp = SUB_OP_ALU
+        else '0';
 
-        if rising_edge(s_clk) then
-            s_op1 <= pi_op1;
-            s_op2 <= pi_op2;
-            if (pi_aluOp = AND_ALU_OP) then
-                -- AND
-                -- begin solution:
-                -- end solution!!
-            elsif (pi_aluOp = OR_ALU_OP) then
-                -- OR
-                -- begin solution:
-                -- end solution!!
-            elsif (pi_aluOp = XOR_ALU_OP) then
-                -- XOR
-                -- begin solution:
-                -- end solution!!
-            elsif (pi_aluOp = SLL_ALU_OP) then
-                -- SLL
-                -- begin solution:
-                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
-                s_shiftDirection <= '0';
-                -- end solution!!
-            elsif (pi_aluOp = SRL_ALU_OP) then
-                -- SRL
-                -- begin solution:
-                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
-                s_shiftDirection <= '1';
-                -- end solution!!
-            elsif (pi_aluOp = SRA_OP_ALU) then
-                -- SRA
-                -- begin solution:
-                s_shiftType      <= pi_aluOp(opCodeWidth - 1);
-                s_shiftDirection <= '1';
-                -- end solution!!
-            elsif (pi_aluOp = ADD_OP_ALU) then
-                -- ADD
-                -- begin solution:
-                s_cIn <= pi_aluOp(opCodeWidth - 1);
-                -- end solution!!
-            elsif (pi_aluOp = SUB_OP_ALU) then
-                -- SUB
-                -- begin solution:
-                s_cIn <= pi_aluOp(opCodeWidth - 1);
-                -- end solution!!
-            elsif (pi_aluOp = SLT_OP_ALU) then
-                -- SLT
-                -- begin solution:
-                -- end solution!!
-            elsif (pi_aluOp = SLTU_OP_ALU) then
-                -- SLTU
-                -- begin solution:
-                -- end solution!!
-            elsif (pi_aluOp = EQ_OP_ALU) then
-            else
-                -- OTHERS
-                -- begin solution:
-                -- end solution!!
-            end if;
-        end if;
+    s_shiftType <= pi_aluOp(opCodeWidth - 1) when pi_aluOp = SRL_ALU_OP or pi_aluOp = SLL_ALU_OP or pi_aluOp = SRA_OP_ALU
+        else '0';
 
-        if falling_edge(s_clk) then
-            if (pi_aluOp = AND_ALU_OP) then
-                -- AND
-                -- begin solution:
-                po_aluOut   <= s_res3;
-                po_carryOut <= '0';
-                -- end solution!!
-            elsif (pi_aluOp = OR_ALU_OP) then
-                -- OR
-                -- begin solution:
-                po_aluOut   <= s_res2;
-                po_carryOut <= '0';
-                -- end solution!!
-            elsif (pi_aluOp = XOR_ALU_OP) then
-                -- XOR
-                -- begin solution:
-                po_aluOut   <= s_res1;
-                po_carryOut <= '0';
-                -- end solution!!
-            elsif (pi_aluOp = SLL_ALU_OP) then
-                -- SLL
-                -- begin solution:
-                po_aluOut   <= s_res4;
-                po_carryOut <= '0';
-                -- end solution!!
-            elsif (pi_aluOp = SRL_ALU_OP) then
-                -- SRL
-                -- begin solution:
-                po_aluOut   <= s_res4;
-                po_carryOut <= '0';
-                -- end solution!!
-            elsif (pi_aluOp = SRA_OP_ALU) then
-                -- SRA
-                -- begin solution:
-                po_aluOut   <= s_res4;
-                po_carryOut <= '0';
-                -- end solution!!
-            elsif (pi_aluOp = ADD_OP_ALU) then
-                -- ADD
-                -- begin solution:
-                po_aluOut   <= s_res5;
-                po_carryOut <= s_cOut;
-                -- end solution!!
-            elsif (pi_aluOp = SUB_OP_ALU) then
-                -- SUB
-                -- begin solution:
-                po_aluOut   <= s_res5;
-                po_carryOut <= s_cOut;
-                -- end solution!!
-            elsif (pi_aluOp = SLT_OP_ALU) then
-                -- SLT
-                -- begin solution:
-                if (s_op1 >= s_op2) then
-                    po_aluOut   <= "00000000";
-                    po_carryOut <= '0';
-                elsif (s_op1 < s_op2) then
-                    po_aluOut   <= "00000001";
-                    po_carryOut <= '0';
-                end if;
-                -- end solution!!
-            elsif (pi_aluOp = SLTU_OP_ALU) then
-                -- SLTU
-                -- begin solution:
-                if (s_op1 >= s_op2) then
-                    po_aluOut   <= "00000000";
-                    po_carryOut <= '0';
-                elsif (s_op1 < s_op2) then
-                    po_aluOut   <= "00000001";
-                    po_carryOut <= '0';
-                end if;
-                -- end solution!!
-            elsif (pi_aluOp = EQ_OP_ALU) then
-                -- SLTU
-                -- begin solution:
-                if (s_op1 /= s_op2) then
-                    po_aluOut   <= "00000000";
-                    po_carryOut <= '0';
-                elsif (s_op1 = s_op2) then
-                    po_aluOut   <= "00000001";
-                    po_carryOut <= '0';
-                end if;
-                -- end solution!!
-            else
-                -- OTHERS
-                -- begin solution:
-                po_aluOut   <= (others => '0');
-                po_carryOut <= '0';
-                -- end solution!!
-            end if;
-        end if;
-    end process;
+    s_shiftDirection <= '1' when pi_aluOp = SRL_ALU_OP or pi_aluOp = SRA_OP_ALU
+        else '0';
+
+    s_res6 <= std_logic_vector(to_unsigned(1, dataWidth)) when signed(s_op1) < signed(s_op2)
+        else std_logic_vector(to_unsigned(0, dataWidth));
+
+    s_res7 <= std_logic_vector(to_unsigned(1, dataWidth)) when unsigned(s_op1) < unsigned(s_op2)
+        else std_logic_vector(to_unsigned(0, dataWidth));
+
+    with pi_aluOp select
+        po_aluOut <= s_res1 when XOR_ALU_OP,
+        s_res2 when OR_ALU_OP,
+        s_res3 when AND_ALU_OP,
+        s_res4 when SRL_ALU_OP,
+        s_res4 when SLL_ALU_OP,
+        s_res4 when SRA_OP_ALU,
+        s_res5 when ADD_OP_ALU,
+        s_res5 when SUB_OP_ALU,
+        s_res6 when SLT_OP_ALU,
+        s_res7 when SLTU_OP_ALU,
+        (others => '0') when others;
+
+    po_carryOut <= s_cout when pi_aluOp = ADD_OP_ALU or pi_aluOp = SUB_OP_ALU
+        else '0';
+
+    po_zero <= '1' when po_aluOut = std_logic_vector(to_unsigned(0, dataWidth))
+        else '0';
+
 end architecture behavior;

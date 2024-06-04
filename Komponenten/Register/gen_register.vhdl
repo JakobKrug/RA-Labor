@@ -26,7 +26,7 @@ architecture behavior of gen_register is
 begin
     process (pi_clk, pi_rst, s_current_data)
     begin
-        if falling_edge(pi_clk) then
+        if rising_edge(pi_clk) then
             s_current_data <= pi_data;
         end if;
         if (pi_rst = '1') then

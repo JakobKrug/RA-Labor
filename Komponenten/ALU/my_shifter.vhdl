@@ -6,20 +6,20 @@ use work.CONSTANT_Package.all;
 
 entity my_shifter is
     generic (
-        dataWidth : integer := DATA_WIDTH_GEN
+        dataWidth : INTEGER := DATA_WIDTH_GEN
     );
     port (
-        pi_op1, pi_op2            : in std_logic_vector(dataWidth - 1 downto 0);
-        pi_shiftType, pi_shiftDir : in std_logic;
-        po_res                    : out std_logic_vector(dataWidth - 1 downto 0)
+        pi_op1, pi_op2 : in STD_LOGIC_VECTOR(dataWidth - 1 downto 0);
+        pi_shiftType, pi_shiftDir : in STD_LOGIC;
+        po_res : out STD_LOGIC_VECTOR(dataWidth - 1 downto 0)
     );
 end entity;
 
 architecture behavior of my_shifter is
-    signal s_shamtInt : integer range 0 to (2 ** (integer(log2(real(dataWidth)))));
-    signal s_tmp_val  : std_logic := '0';
+    signal s_shamtInt : INTEGER range 0 to (2 ** (INTEGER(log2(real(dataWidth)))));
+    signal s_tmp_val : STD_LOGIC := '0';
 begin
-    s_shamtInt <= to_integer(unsigned(pi_op2(integer(log2(real(dataWidth))) - 1 downto 0)));
+    s_shamtInt <= to_integer(unsigned(pi_op2(INTEGER(log2(real(dataWidth))) - 1 downto 0)));
     process (pi_op1, s_shamtInt, pi_shiftType, pi_shiftDir) begin
         -- Set all bits to desired default
         if pi_shiftType = '0' then
