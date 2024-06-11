@@ -24,7 +24,8 @@ entity sign_extender is
         po_uImmediate : out std_logic_vector (WORD_WIDTH - 1 downto 0);
         po_iImmediate : out std_logic_vector (WORD_WIDTH - 1 downto 0);
         po_bImmediate : out std_logic_vector (WORD_WIDTH - 1 downto 0);
-        po_jImmediate : out std_logic_vector (WORD_WIDTH - 1 downto 0)
+        po_jImmediate : out std_logic_vector (WORD_WIDTH - 1 downto 0);
+        po_sImmediate : out std_logic_vector (WORD_WIDTH - 1 downto 0)
     );
     -- end solution!!
 end entity sign_extender;
@@ -56,6 +57,12 @@ begin
         po_jImmediate(19 downto 12) <= pi_instr(19 downto 12);
         po_jImmediate(24 downto 21) <= pi_instr(24 downto 21);
         po_jImmediate(31 downto 20) <= (others => pi_instr(31));
+
+        po_sImmediate(0) <= pi_instr(7);
+        po_sImmediate(4 downto 1)   <= pi_instr(11 downto 8);
+        po_sImmediate(31 downto 11) <= pi_instr(30 downto 25); 
+        po_sImmediate(31 downto 11) <= (others => pi_instr(31));
+        
     end process;
     -- end solution!!
 end architecture arc;

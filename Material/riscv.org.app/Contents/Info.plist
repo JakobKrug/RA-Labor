@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIconFile</key>
+	<string>ApplicationIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.apple.Safari.WebApp.4714DA06-03AB-46F0-91F3-37510A028C82</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>riscv.org</string>
+	<key>CFBundlePackageType</key>
+	<string>AAPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>x-webkit-app-launch</string>
+			</array>
+			<key>LSHandlerRank</key>
+			<string>None</string>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>LSTemplateApplication</key>
+	<true/>
+	<key>LSTemplateApplicationParameters</key>
+	<dict>
+		<key>CFBundleIdentifier</key>
+		<string>com.apple.Safari.WebApp</string>
+		<key>TemplateAppUUID</key>
+		<string>4714DA06-03AB-46F0-91F3-37510A028C82</string>
+		<key>defaultarguments</key>
+		<true/>
+		<key>teamIdentifier</key>
+		<string>0000000000</string>
+	</dict>
+	<key>Manifest</key>
+	<dict>
+		<key>name</key>
+		<string>https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf</string>
+		<key>short_name</key>
+		<string>riscv.org</string>
+		<key>start_url</key>
+		<string>https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf</string>
+	</dict>
+	<key>WKManifestIconKind</key>
+	<string>Monogram</string>
+	<key>WKPushBundleMetadata</key>
+	<dict>
+		<key>manifestId</key>
+		<string>https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf</string>
+	</dict>
+</dict>
+</plist>

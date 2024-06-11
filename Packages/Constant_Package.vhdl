@@ -44,6 +44,18 @@ package constant_package is
   constant FUNC3_BLTU    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "110";
   constant FUNC3_BGEU    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "111";
 
+  -- Load 
+  constant LB_OP    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "000";
+  constant LH_OP    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "001";
+  constant LW_OP    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "010";
+  constant LBU_OP   : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "100";
+  constant LHU_OP   : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "101";
+
+  -- Store
+  constant SB_OP    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "000";
+  constant SH_OP    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "001";
+  constant SW_OP    : std_logic_vector(FUNC3_WIDTH - 1 downto 0) := "010";
+
   -- RISC-V Instruction Opcodes: Since some instructions (e.g. all R-Format instructions) share the same opcode, only one of them is declared here
 
   -- U-Format
@@ -57,12 +69,12 @@ package constant_package is
   constant B_OP_INS : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "1100011"; -- beq, all B-Format instructions have the same opcode
 
   -- S-Format
-  constant SB_OP_INS : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0100011"; -- sb
+  constant S_OP_INS : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0100011"; -- sb
 
   -- I-Format
   constant JALR_OP_INS : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "1100111"; -- jalr
 
-  constant LB_OP_INS : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0000011"; -- lb
+  constant L_OP_INS : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0000011"; -- lb
 
   constant I_OP_INS : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0010011"; -- addi
 
