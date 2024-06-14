@@ -22,10 +22,13 @@ ghdl -a --std=08 ../../Komponenten/Decoder/decoder.vhdl
 
 #Register
 ghdl -a --std=08 ../../Komponenten/Register/gen_register.vhdl
+ghdl -a --std=08 ../../Komponenten/Register/gen_register_pc.vhdl
 
 #Registerfile
 ghdl -a --std=08 ../../Komponenten/Registerfile/register_file.vhdl
 
+#Memory
+ghdl -a --std=08 ../../Komponenten/DataMemory/data_memory.vhdl
 
 ghdl -a --std=08 ../../Komponenten/Cache/instruction_cache.vhdl
 ghdl -a --std=08 ../../Komponenten/Register/ControlWordRegister.vhdl
@@ -33,6 +36,6 @@ ghdl -a --std=08 ../../Komponenten/Register/ControlWordRegister.vhdl
 ghdl -a --std=08 ../../Komponenten/RISCV/riubs_riscv.vhdl
 
 ghdl -a  --std=08 riubs_riscv_tb.vhdl
-ghdl -e  --std=08 riubs_only_RISC_V_tb
-ghdl -r  --std=08 riubs_only_RISC_V_tb --stop-time=10ms --vcd=vcd_riub.vcd
+ghdl -e  --std=08 riubs_riscv_tb
+ghdl -r  --std=08 riubs_riscv_tb --stop-time=10ms --vcd=vcd_riubs.vcd
 #gtkwave ri_only_risc_v.vcd

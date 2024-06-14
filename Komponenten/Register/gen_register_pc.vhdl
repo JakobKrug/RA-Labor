@@ -23,7 +23,7 @@ architecture arc1 of gen_register_pc is
 
     begin
     
-    process (pi_clk,pi_rst)
+    process (pi_clk, pi_rst)
 
     begin
         if (pi_rst) then

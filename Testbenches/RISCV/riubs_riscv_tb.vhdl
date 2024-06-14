@@ -11,11 +11,11 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.constant_package.all;
 use work.types_package.all;
-entity riubs_only_RISC_V_tb is
+entity riubs_riscv_tb is
 
-end entity riubs_only_RISC_V_tb;
+end entity riubs_riscv_tb;
 
-architecture structure of riubs_only_RISC_V_tb is
+architecture structure of riubs_riscv_tb is
 
     constant PERIOD          : time := 10 ns;
     signal s_clk             : std_logic;
@@ -65,7 +65,7 @@ architecture structure of riubs_only_RISC_V_tb is
 begin
 
     -- begin solution:
-    riub_only_riscv : entity work.riubs_only_RISC_V
+    riub_only_riscv : entity work.riubs_riscv
         -- begin solution:
         port map(
             pi_rst             => s_rst,

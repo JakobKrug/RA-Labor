@@ -38,15 +38,14 @@ architecture arc of register_file is
     signal s_registers : registermemory := (others => (others => '0'));
     -- begin solution:
 begin
-    po_registerOut <= s_registers;
+
     process (pi_clk, pi_rst)
     begin
-        po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
-        po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
+
         if (pi_rst = '1') then
             s_registers <= (others => (others => '0'));
         else
-            if (rising_edge(pi_clk)) then
+            if (falling_edge(pi_clk)) then
                 if (pi_writeEnable = '1') then
                     if (to_integer(unsigned(pi_writeRegAddr)) /= 0) then
                         s_registers(to_integer(unsigned(pi_writeRegAddr))) <= pi_writeRegData;
@@ -55,5 +54,8 @@ begin
             end if;
         end if;
     end process;
+    po_registerOut <= s_registers;
+    po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
+    po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
     -- end solution!!
 end architecture arc;

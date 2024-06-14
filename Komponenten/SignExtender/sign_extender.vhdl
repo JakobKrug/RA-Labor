@@ -60,7 +60,7 @@ begin
 
         po_sImmediate(0) <= pi_instr(7);
         po_sImmediate(4 downto 1)   <= pi_instr(11 downto 8);
-        po_sImmediate(31 downto 11) <= pi_instr(30 downto 25); 
+        po_sImmediate(10 downto 5) <= pi_instr(30 downto 25); 
         po_sImmediate(31 downto 11) <= (others => pi_instr(31));
         
     end process;

@@ -24,15 +24,15 @@ use ieee.numeric_std.all;
 use work.constant_package.all;
 use work.types_package.all;
 
-entity riub_riscv is
+entity riub_only_RISC_V is
     port (
         pi_clk          : in std_logic;
         pi_instruction  : in memory          := (others => (others => '0'));
         po_registersOut : out registerMemory := (others => (others => '0'))
     );
-end entity riub_riscv;
+end entity riub_only_RISC_V;
 
-architecture structure of riub_riscv is
+architecture structure of riub_only_RISC_V is
 
     constant PERIOD              : time                                      := 10 ns;
     constant ADD_FOUR_TO_ADDRESS : std_logic_vector(WORD_WIDTH - 1 downto 0) := std_logic_vector(to_signed((4), WORD_WIDTH));
@@ -94,6 +94,16 @@ architecture structure of riub_riscv is
     signal s_zero          : std_logic                                 := '0';
     signal s_b_selEX       : std_logic                                 := '0';
     signal s_b_selMEM      : std_logic                                 := '0';
+
+    signal s_clk         : std_logic                                 := '0';
+    signal s_rst         : std_logic                                 := '0';
+    signal s_adr         : std_logic_vector(ADR_WIDTH - 1 downto 0)  := (others => '0');
+    signal s_ctrmem      : std_logic_vector(2 downto 0)              := (others => '0');
+    signal s_write       : std_logic                                 := '0';
+    signal s_read        : std_logic                                 := '0';
+    signal s_writedata   : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_readdata    : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal s_debugdatamemory : memory;
 
 begin
 
@@ -255,7 +265,7 @@ begin
             po_data => s_dAdressEX
         );
 
-    ID_EX_PC : entity work.gen_register
+    id_ex_pc : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
             pi_rst  => s_b_selMEM or s_rst,
@@ -263,7 +273,7 @@ begin
             pi_data => s_pcID,
             po_data => s_pcEX
         );
-    ID_EX_PC4 : entity work.gen_register
+    id_ex_pc4 : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
             pi_rst  => s_b_selMEM or s_rst,
@@ -368,6 +378,15 @@ begin
             po_data => s_branchDestMEM
         );
 
+    ex_mem_op2 : entity work.gen_register
+        generic map(WORD_WIDTH)
+        port map(
+            pi_rst  => s_rst,
+            pi_clk  => s_clk,
+            pi_data => s_op2EX,
+            po_data => s_op2MEM
+        );
+
     ---********************************************************************
 
     process (s_clk, s_rst)
@@ -377,7 +396,7 @@ begin
         elsif rising_edge (s_clk) then s_b_selMEM <= s_b_selEX;
         end if;
     end process;
-    ---* memory phase
+    
 
     --Pipeline-Register (MEM -> WB) start
 
@@ -425,8 +444,35 @@ begin
             po_data => s_pc4WB
         );
 
+    mem_wb_datamemory : entity work.gen_register
+        generic map(WORD_WIDTH)
+        port map(
+            pi_rst  => s_rst,
+            pi_clk  => s_clk,
+            pi_data => s_readdataMEM,
+            po_data => s_readdataWB
+        );
+
+    ---* memory phase *****************************************************
+
+    data_memory : entity work.data_memory
+        
+        port map(
+            pi_adr => s_aluOutMEM,
+            pi_clk => s_clk,
+            pi_rst => s_rst,
+            pi_ctrmem => s_controlWordMEM.MEM_CTR,
+            pi_write => s_controlWordMEM.MEM_WRITE,
+            pi_read => s_controlWordMEM.MEM_READ,
+            pi_writedata => s_op2MEM,
+            po_readdata => s_readdataMEM,
+            po_debugdatamemory => s_debugdatamemory
+        );
+
     ---********************************************************************
     --write back phase
+
+   
 
     lui_mux : entity work.gen_mux4
         generic map(WORD_WIDTH)
@@ -434,7 +480,7 @@ begin
             pi_first    => s_aluOutWB,
             pi_second   => s_immediateWB,
             pi_third    => s_pc4wb,
-            pi_four     => s_pc4wb,
+            pi_four     => s_readdataWB,
             pi_selector => s_controlWordWB.WB_SEL,
             po_output   => s_wbMuxOut
         );
@@ -449,7 +495,7 @@ begin
             pi_writeRegData => s_wbMuxOut,
             pi_clk          => s_clk,
             pi_rst          => s_rst,
-            pi_writeEnable  => not s_controlWordEX.IS_BRANCH,
+            pi_writeEnable  => not s_controlWordEX.REG_WRITE,
             po_readRegData1 => s_op1ID,
             po_readRegData2 => s_op2ID,
             po_registerOut  => s_registersOut
