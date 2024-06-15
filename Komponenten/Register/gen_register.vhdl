@@ -10,26 +10,32 @@ use ieee.numeric_std.all;
 use work.Constant_Package.all;
 
 entity gen_register is
+    -- begin solution:
     generic (
-        registerWidth : integer := REG_ADR_WIDTH
+        registerWidth : integer := 32
     );
     port (
-        pi_data : in std_logic_vector(registerWidth - 1 downto 0);
-        pi_clk  : in std_logic                                     := '0';
-        pi_rst  : in std_logic                                     := '0';
-        po_data : out std_logic_vector(registerWidth - 1 downto 0) := (others => '0')
+        pi_clk, pi_rst, pi_flush : in std_logic                                     := '0';
+        pi_data                  : in std_logic_vector(registerWidth - 1 downto 0)  := (others => '0');
+        po_data                  : out std_logic_vector(registerWidth - 1 downto 0) := (others => '0')
     );
+    -- end solution!!
 end gen_register;
 
 architecture behavior of gen_register is
-    signal s_current_data : std_logic_vector(registerWidth - 1 downto 0) := (others => '0');
+    -- begin solution:
 begin
-    process (pi_clk, pi_rst, s_current_data)
+    process (pi_clk, pi_rst, pi_flush) is
     begin
-        if rising_edge(pi_clk) then s_current_data <= pi_data;
+        if (pi_rst = '1') then
+            po_data <= (others => '0');
+        elsif (rising_edge(pi_clk)) then
+            if (pi_flush = '1') then
+                po_data <= (others => '0');
+            else
+                po_data <= pi_data;
+            end if;
         end if;
-        if (pi_rst = '1') then s_current_data <= (others => '0');
-        end if;
-        po_data <= s_current_data;
     end process;
+    -- end solution!!
 end behavior;
