@@ -57,16 +57,12 @@ architecture structure of riubs_riscv is
     signal s_pcIn           : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_pcID           : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_pcEX           : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_pcMEM          : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_pcIF           : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_pc4In          : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_pc4ID          : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_pc4EX          : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_pc4MEM         : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_pc4WB          : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_pc4IF          : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_rst            : std_logic                                    := '0';
-    signal s_rst_reg        : std_logic                                    := '0';
     signal s_clk            : std_logic                                    := '0';
     signal s_carryOut       : std_logic                                    := '0';
     signal s_dAdressEX      : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
@@ -86,16 +82,9 @@ architecture structure of riubs_riscv is
     signal s_b_selEX       : std_logic                                 := '0';
     signal s_b_selMEM      : std_logic                                 := '0';
 
-    signal s_adr             : std_logic_vector(ADR_WIDTH - 1 downto 0)  := (others => '0');
-    signal s_ctrmem          : std_logic_vector(2 downto 0)              := (others => '0');
-    signal s_write           : std_logic                                 := '0';
-    signal s_read            : std_logic                                 := '0';
-    signal s_writedata       : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_readdata        : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal s_readdataMEM     : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal s_readdataWB      : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal s_debugdatamemory : memory;
-
+    signal s_debugdatamemory : memory                                    := (others => (others => '0'));
+    signal s_readdataMEM     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_readdataWB      : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
 begin
 
     s_clk              <= pi_clk;
@@ -104,8 +93,9 @@ begin
     po_debugdatamemory <= s_debugdatamemory;
     po_registersOut    <= s_registersOut;
 
-    --program counter adder and pc-register
-
+    ---********************************************************************
+    ---* program counter adder and pc-register
+    ---********************************************************************
     pc_incrementer : entity work.my_gen_n_bit_full_adder
         generic map(WORD_WIDTH)
         port map(
@@ -168,20 +158,20 @@ begin
     IF_ID_PC : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
+            pi_rst   => s_rst,
+            pi_clk   => s_clk,
             pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data => s_instructionAddress,
-            po_data => s_pcID
+            pi_data  => s_instructionAddress,
+            po_data  => s_pcID
         );
     IF_ID_PC4 : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
+            pi_rst   => s_rst,
+            pi_clk   => s_clk,
             pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data => s_pcIn,
-            po_data => s_pc4ID
+            pi_data  => s_pcIn,
+            po_data  => s_pc4ID
         );
 
     ---********************************************************************
@@ -205,7 +195,8 @@ begin
         );
 
     with s_instrID(6 downto 0) select
-    s_immediateID <= s_iImmediateID when I_OP_INS,
+    s_immediateID <=
+        s_iImmediateID when I_OP_INS,
         s_uImmediateID when LUI_OP_INS,
         s_uImmediateID when AUIPC_OP_INS,
         s_iImmediateID when JALR_OP_INS,
@@ -269,21 +260,21 @@ begin
     id_ex_pc : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
+            pi_rst   => s_rst,
+            pi_clk   => s_clk,
             pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data => s_pcID,
-            po_data => s_pcEX
+            pi_data  => s_pcID,
+            po_data  => s_pcEX
         );
 
     id_ex_pc4 : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
+            pi_rst   => s_rst,
+            pi_clk   => s_clk,
             pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data => s_pc4ID,
-            po_data => s_pc4EX
+            pi_data  => s_pc4ID,
+            po_data  => s_pc4EX
         );
     ---********************************************************************
     ---* execute phase
@@ -329,6 +320,7 @@ begin
 
     s_b_selEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else
         '0';
+
     ---********************************************************************
     ---* Pipeline-Register (EX -> MEM) startpi_clk
     ---********************************************************************
@@ -370,7 +362,7 @@ begin
             po_data  => s_aluOutMEM
         );
 
-    EX_MEM_PC4 : entity work.gen_register
+    ex_mem_pc4 : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
             pi_rst   => s_rst,
@@ -379,9 +371,8 @@ begin
             pi_data  => s_pc4EX,
             po_data  => s_pc4MEM
         );
-    --ex mem branch new
-    --begin solution:  
-    EX_MEM_Branch : entity work.gen_register
+
+    ex_mem_branch : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
             pi_rst   => s_rst,
@@ -390,8 +381,6 @@ begin
             pi_data  => s_branchDestEX,
             po_data  => s_branchDestMEM
         );
-
-                --end solution!!
 
     ex_mem_op2 : entity work.gen_register
         generic map(WORD_WIDTH)
@@ -471,6 +460,7 @@ begin
     ---* memory phase
     ---********************************************************************
     memdata : entity work.data_memory
+    generic map(ADR_WIDTH, mem_size => 2 ** 10)
         port map(
             pi_adr             => s_aluOutMEM,
             pi_clk             => s_clk,
@@ -492,7 +482,7 @@ begin
             pi_first    => s_aluOutWB,
             pi_second   => s_immediateWB,
             pi_third    => s_pc4WB,
-            pi_four     => s_readdataWB,
+            pi_four     => s_readdataMEM,
             pi_selector => s_controlWordWB.WB_SEL,
             po_output   => s_wbMuxOut
         );
@@ -508,7 +498,7 @@ begin
             pi_writeRegData => s_wbMuxOut,
             pi_clk          => s_clk,
             pi_rst          => s_rst,
-            pi_writeEnable  => not s_controlWordWB.REG_WRITE,
+            pi_writeEnable  => s_controlWordWB.REG_WRITE,
             po_readRegData1 => s_op1ID,
             po_readRegData2 => s_op2ID,
             po_registerOut  => s_registersOut

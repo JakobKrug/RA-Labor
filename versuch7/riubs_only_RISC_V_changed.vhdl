@@ -1,15 +1,16 @@
 -- ========================================================================
 -- Author:       Marcel Rieß
--- Last updated: 22.05.2024
--- Description:  RUI-Only-RISC-V for an incomplete RV32I implementation, 
---               support only R/I/U-Instructions. 
+-- Last updated: 25.04.2024
+-- Description:  R-Only-RISC-V foran incomplete RV32I implementation, support 
+--               only R-Instructions. 
+--
 -- ========================================================================
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.constant_package.all;
 use work.types_package.all;
+
 entity riubs_only_RISC_V is
     port (
         pi_rst             : in std_logic;
@@ -29,6 +30,7 @@ architecture structure of riubs_only_RISC_V is
     signal s_op2EX              : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_op1ID              : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_op2ID              : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_op2MEM             : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_aluOutEX           : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_aluOutMEM          : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_aluOutWB           : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
@@ -47,7 +49,6 @@ architecture structure of riubs_only_RISC_V is
     signal s_iImmediateID : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_bImmediateID : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_sImmediateID : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-
     signal s_immediateEX  : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_immediateMEM : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_immediateWB  : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
@@ -73,16 +74,16 @@ architecture structure of riubs_only_RISC_V is
     signal s_controlWordWB  : controlWord                                  := CONTROL_WORD_INIT;
     signal s_registersOut   : registerMemory                               := (others => (others => '0'));
     signal s_instructions   : memory                                       := (others => (others => '0'));
-    signal s_zero           : std_logic                                    := '0';
-    signal s_branch_MuxOut  : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_branchDestEX   : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_b_selEX        : std_logic                                    := '0';
-    signal s_branchDestMEM  : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_b_selMEM       : std_logic                                    := '0';
 
-    signal s_readdataMEM     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_branchDestEX  : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_branchDestMEM : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_branch_MuxOut : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_zero          : std_logic                                 := '0';
+    signal s_b_selEX       : std_logic                                 := '0';
+    signal s_b_selMEM      : std_logic                                 := '0';
+
     signal s_debugdatamemory : memory                                    := (others => (others => '0'));
-    signal s_op2MEM          : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_readdataMEM     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_readdataWB      : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
 begin
 
@@ -92,9 +93,8 @@ begin
     po_debugdatamemory <= s_debugdatamemory;
     po_registersOut    <= s_registersOut;
 
-    ---********************************************************************
-    ---* program counter adder and pc-register
-    ---********************************************************************
+    --program counter adder and pc-register
+
     pc_incrementer : entity work.my_gen_n_bit_full_adder
         generic map(WORD_WIDTH)
         port map(
@@ -188,13 +188,13 @@ begin
     with s_instrID(6 downto 0) select
     s_immediateID <=
         s_iImmediateID when I_OP_INS,
-        s_uImmediateID when LUI_OP_INS,
-        s_uImmediateID when AUIPC_OP_INS,
         s_iImmediateID when JALR_OP_INS,
+        s_iImmediateID when L_OP_INS,
+        s_uImmediateID when AUIPC_OP_INS,
+        s_uImmediateID when LUI_OP_INS,
         s_jImmediateID when JAL_OP_INS,
         s_bImmediateID when B_OP_INS,
         s_sImmediateID when S_OP_INS,
-        s_iImmediateID when L_OP_INS,
         "00000000000000000000000000000000" when others;
 
     ---********************************************************************
@@ -290,16 +290,7 @@ begin
             po_zero     => s_zero
         );
 
-    pc4_incrementer : entity work.my_gen_n_bit_full_adder
-        generic map(WORD_WIDTH)
-        port map(
-            P_OP1      => s_pcEx,
-            P_OP2      => ADD_FOUR_TO_ADDRESS,
-            P_CARRY_IN => '0',
-            P_SUM_OUT  => s_pc4EX
-        );
-
-    branch_alu_adder : entity work.my_gen_n_bit_full_adder
+    branch_alu : entity work.my_gen_n_bit_full_adder
         generic map(WORD_WIDTH)
         port map(
             P_OP1      => s_pcEX,
@@ -307,8 +298,10 @@ begin
             P_CARRY_IN => '0',
             P_SUM_OUT  => s_branchDestEX
         );
-    s_B_SELEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else
+
+    s_b_selEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else
         '0';
+
     ---********************************************************************
     ---* Pipeline-Register (EX -> MEM) startpi_clk
     ---********************************************************************
@@ -361,7 +354,7 @@ begin
         );
     --ex mem branch new
     --begin solution:  
-    EX_MEM_Branch : entity work.gen_register
+    ex_mem_branch : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
             pi_rst   => s_rst,
@@ -371,7 +364,9 @@ begin
             po_data  => s_branchDestMEM
         );
 
-    EX_MEM_OP2 : entity work.gen_register
+    --end solution!!
+
+    ex_mem_op2 : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
             pi_rst   => s_rst,
@@ -385,11 +380,10 @@ begin
     begin
         if (s_rst) then
             s_b_selMEM <= '0';
-        elsif rising_edge (s_clk) then --bei Sprung Register reset
+        elsif rising_edge (s_clk) then
             s_b_selMEM <= s_b_selEX;
         end if;
     end process;
-
     ---********************************************************************
     ---* Pipeline-Register (MEM -> WB) start
     ---********************************************************************
@@ -450,7 +444,6 @@ begin
     ---* memory phase
     ---********************************************************************
     memdata : entity work.data_memory
-        generic map(ADR_WIDTH, mem_size => 2 ** 10)
         port map(
             pi_adr             => s_aluOutMEM,
             pi_clk             => s_clk,

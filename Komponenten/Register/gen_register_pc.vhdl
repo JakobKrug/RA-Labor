@@ -22,7 +22,7 @@ begin
     process (pi_clk, pi_rst) begin
         if (pi_rst = '1') then
             po_data <= "11111111111111111111111111111100";
-        elsif rising_edge (pi_clk) then
+        elsif (rising_edge (pi_clk)) then
             po_data <= pi_data;
         end if;
     end process;

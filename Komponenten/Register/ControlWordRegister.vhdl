@@ -44,7 +44,7 @@ begin
     begin
 
         if (pi_rst) then s_controlWord                <= CONTROL_WORD_INIT;
-        elsif rising_edge (pi_clk) then s_controlWord <= pi_controlWord;
+        elsif (rising_edge (pi_clk)) then s_controlWord <= pi_controlWord;
         end if;
     end process;
 

@@ -39,7 +39,7 @@ architecture arc of register_file is
     -- begin solution:
 begin
 
-    process (pi_clk, pi_rst)
+    process (pi_clk, pi_rst, pi_writeEnable)
     begin
 
         if (pi_rst = '1') then
@@ -51,11 +51,11 @@ begin
                         s_registers(to_integer(unsigned(pi_writeRegAddr))) <= pi_writeRegData;
                     end if;
                 end if;
+                po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
+                po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
             end if;
         end if;
     end process;
     po_registerOut <= s_registers;
-    po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
-    po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
     -- end solution!!
 end architecture arc;

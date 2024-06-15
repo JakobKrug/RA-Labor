@@ -79,7 +79,6 @@ begin
 
     begin
         -- Increment the variable by 1
-
         if rising_edge(s_clk) then
             if (count = 8) then
                 assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
