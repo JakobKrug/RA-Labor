@@ -80,82 +80,116 @@ begin
     begin
         -- Increment the variable by 1
 
-        if rising_edge(s_clk) then 
---report "i-Operation failed. Memory 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & "in cycle" &  integer'image(count);    
-            --report "i-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & "in cycle" &  integer'image(count);  
-            if (count = 8) then assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
+        if rising_edge(s_clk) then
+            if (count = 8) then
+                assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
             end if;
-            if (count = 9) then assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
+            if (count = 9) then
+                assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
             end if;
-            if (count = 10) then assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
+            if (count = 10) then
+                assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
             end if;
-            if (count = 11) then assert (to_integer(signed(s_registersOut(10))) = 9) report "OR-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(9) severity error;
+            if (count = 11) then
+                assert (to_integer(signed(s_registersOut(10))) = 9) report "OR-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(9) severity error;
             end if;
-            if (count = 12) then assert (to_integer(signed(s_registersOut(8))) = 17) report "ADD-Operation failed. Register 8 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) severity error;
+            if (count = 12) then
+                assert (to_integer(signed(s_registersOut(8))) = 17) report "ADD-Operation failed. Register 8 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) severity error;
             end if;
-            if (count = 13) then assert (to_integer(signed(s_registersOut(11))) = 1) report "SUB-Operation failed. Register 11 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(1) severity error;
+            if (count = 13) then
+                assert (to_integer(signed(s_registersOut(11))) = 1) report "SUB-Operation failed. Register 11 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(1) severity error;
             end if;
-            if (count = 14) then assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
+            if (count = 14) then
+                assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
             end if;
-            if (count = 16) then assert (to_integer(signed(s_registersOut(12))) = 25) report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) severity error;
+            if (count = 16) then
+                assert (to_integer(signed(s_registersOut(12))) = 25) report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) severity error;
             end if;
-            if (count = 17) then assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
+            if (count = 17) then
+                assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
             end if;
-            if (count = 20) then assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 56) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 56) severity error;
+            if (count = 20) then
+                assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 56) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 56) severity error;
             end if;
-            if (count = 21) then assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 60) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 60) severity error;
+            if (count = 21) then
+                assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 60) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 60) severity error;
             end if;
-            if (count = 22) then assert (to_integer(unsigned(s_registersOut(13))) = 8 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(8 * 2 ** 12) severity error;
+            if (count = 22) then
+                assert (to_integer(unsigned(s_registersOut(13))) = 8 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(8 * 2 ** 12) severity error;
             end if;
-            if (count = 23) then assert (to_integer(signed(s_registersOut(13))) = 29 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(29 * 2 ** 12) severity error;
+            if (count = 23) then
+                assert (to_integer(signed(s_registersOut(13))) = 29 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(29 * 2 ** 12) severity error;
             end if;
-            if (count = 24) then assert (to_integer(signed(s_registersOut(15))) = 76) report "JAL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(76) severity error;
+            if (count = 24) then
+                assert (to_integer(signed(s_registersOut(15))) = 76) report "JAL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(76) severity error;
             end if;
-            if (count = 36) then assert (to_integer(signed(s_registersOut(1))) = 9) report "Branch-Operation failed flushing. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & integer'image(9) severity error;
+            if (count = 36) then
+                assert (to_integer(signed(s_registersOut(1))) = 9) report "Branch-Operation failed flushing. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & integer'image(9) severity error;
             end if;
-            if (count = 42) then assert (to_integer(signed(s_registersOut(1))) = 0) report "Branch-Operation failed flushing. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & integer'image(0) severity error;
+            if (count = 42) then
+                assert (to_integer(signed(s_registersOut(1))) = 0) report "Branch-Operation failed flushing. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & integer'image(0) severity error;
             end if;
-            if (count = 37) then assert (to_integer(signed(s_registersOut(10))) = 0) report "ADDI-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(0) severity error;
+            if (count = 37) then
+                assert (to_integer(signed(s_registersOut(10))) = 0) report "ADDI-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(0) severity error;
             end if;
-            if (count = 54) then assert (to_integer(signed(s_registersOut(15))) = 212) report "JARL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(212) severity error;
+            if (count = 54) then
+                assert (to_integer(signed(s_registersOut(15))) = 212) report "JARL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(212) severity error;
             end if;
-            if (count = 55) then assert (to_integer(signed(s_debugdatamemory(4))) = to_integer(signed(s_registersOut(13)))) report "Store-Operation failed. Memory at adress 4 contains " & integer'image(to_integer(signed(s_debugdatamemory(4)))) & " but should contain " & integer'image(to_integer(signed(s_registersOut(13)))) severity error;
+            if (count = 55) then
+                assert (to_integer(signed(s_debugdatamemory(4))) = to_integer(signed(s_registersOut(13)))) report "Store-Operation failed. Memory at adress 4 contains " & integer'image(to_integer(signed(s_debugdatamemory(4)))) & " but should contain " & integer'image(to_integer(signed(s_registersOut(13)))) severity error;
             end if;
-            if (count = 56) then assert (to_integer(signed(s_debugdatamemory(5))) = to_integer(unsigned(s_registersOut(14)(15 downto 0)))) report "Store-Operation failed. Memory at adress 5 contains " & integer'image(to_integer(signed(s_debugdatamemory(5)))) & " but should contain " & integer'image(to_integer(unsigned(s_registersOut(14)(15 downto 0)))) severity error;
+            if (count = 56) then
+                assert (to_integer(signed(s_debugdatamemory(5))) = to_integer(unsigned(s_registersOut(14)(15 downto 0)))) report "Store-Operation failed. Memory at adress 5 contains " & integer'image(to_integer(signed(s_debugdatamemory(5)))) & " but should contain " & integer'image(to_integer(unsigned(s_registersOut(14)(15 downto 0)))) severity error;
             end if;
-            if (count = 57) then assert (to_integer(signed(s_debugdatamemory(6))) = to_integer(unsigned(s_registersOut(12)(7 downto 0)))) report "Store-Operation failed. Memory at adress 6 contains " & integer'image(to_integer(signed(s_debugdatamemory(6)))) & " but should contain " & integer'image(to_integer(unsigned(s_registersOut(12)(7 downto 0)))) severity error;
+            if (count = 57) then
+                assert (to_integer(signed(s_debugdatamemory(6))) = to_integer(unsigned(s_registersOut(12)(7 downto 0)))) report "Store-Operation failed. Memory at adress 6 contains " & integer'image(to_integer(signed(s_debugdatamemory(6)))) & " but should contain " & integer'image(to_integer(unsigned(s_registersOut(12)(7 downto 0)))) severity error;
             end if;
 
-            if (count = 60) then assert (to_integer(signed(s_registersOut(17))) = to_integer(signed(s_debugdatamemory(4)(15 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(signed(s_debugdatamemory(4)(15 downto 0)))) severity error;
+            if (count = 60) then
+                assert (to_integer(signed(s_registersOut(17))) = to_integer(signed(s_debugdatamemory(4)(15 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(signed(s_debugdatamemory(4)(15 downto 0)))) severity error;
             end if;
-            if (count = 61) then assert (to_integer(unsigned(s_registersOut(17))) = to_integer(unsigned(s_debugdatamemory(5)(7 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(unsigned(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(unsigned(s_debugdatamemory(5)(7 downto 0)))) severity error;
+            if (count = 61) then
+                assert (to_integer(unsigned(s_registersOut(17))) = to_integer(unsigned(s_debugdatamemory(5)(7 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(unsigned(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(unsigned(s_debugdatamemory(5)(7 downto 0)))) severity error;
             end if;
-            if (count = 62) then assert (to_integer(signed(s_registersOut(17))) = to_integer(signed(s_debugdatamemory(6)(7 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(signed(s_debugdatamemory(6)(7 downto 0)))) severity error;
+            if (count = 62) then
+                assert (to_integer(signed(s_registersOut(17))) = to_integer(signed(s_debugdatamemory(6)(7 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(signed(s_debugdatamemory(6)(7 downto 0)))) severity error;
             end if;
 
-            if (count = 63) then assert (to_integer(signed(s_registersOut(10))) = 9) report "OR-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(9) severity error;
+            if (count = 63) then
+                assert (to_integer(signed(s_registersOut(10))) = 9) report "OR-Operation failed. Register 10 contains " & integer'image(to_integer(signed(s_registersOut(10)))) & " but should contain " & integer'image(9) severity error;
             end if;
-            if (count = 64) then assert (to_integer(signed(s_registersOut(8))) = 17) report "ADD-Operation failed. Register 8 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) severity error;
+            if (count = 64) then
+                assert (to_integer(signed(s_registersOut(8))) = 17) report "ADD-Operation failed. Register 8 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) severity error;
             end if;
-            if (count = 65) then assert (to_integer(signed(s_registersOut(11))) = 1) report "SUB-Operation failed. Register 11 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(1) severity error;
+            if (count = 65) then
+                assert (to_integer(signed(s_registersOut(11))) = 1) report "SUB-Operation failed. Register 11 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(1) severity error;
             end if;
-            if (count = 66) then assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
+            if (count = 66) then
+                assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
             end if;
-            if (count = 68) then assert (to_integer(signed(s_registersOut(12))) = 25) report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) severity error;
+            if (count = 68) then
+                assert (to_integer(signed(s_registersOut(12))) = 25) report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) severity error;
             end if;
-            if (count = 69) then assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
+            if (count = 69) then
+                assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
             end if;
-            if (count = 72) then assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 56) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 56) severity error;
+            if (count = 72) then
+                assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 56) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 56) severity error;
             end if;
-            if (count = 73) then assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 60) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 60) severity error;
+            if (count = 73) then
+                assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 60) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 60) severity error;
             end if;
-            if (count = 74) then assert (to_integer(unsigned(s_registersOut(13))) = 8 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(8 * 2 ** 12) severity error;
+            if (count = 74) then
+                assert (to_integer(unsigned(s_registersOut(13))) = 8 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(8 * 2 ** 12) severity error;
             end if;
-            if (count = 75) then assert (to_integer(signed(s_registersOut(13))) = 29 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(29 * 2 ** 12) severity error;
+            if (count = 75) then
+                assert (to_integer(signed(s_registersOut(13))) = 29 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(29 * 2 ** 12) severity error;
             end if;
-            if (count = 76) then assert (to_integer(signed(s_registersOut(15))) = 76) report "JAL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(76) severity error;
+            if (count = 76) then
+                assert (to_integer(signed(s_registersOut(15))) = 76) report "JAL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(76) severity error;
             end if;
-            if (count = 105) then assert (to_integer(signed(s_registersOut(15))) = 212) report "JARL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(212) severity error;
+            if (count = 105) then
+                assert (to_integer(signed(s_registersOut(15))) = 212) report "JARL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(212) severity error;
             end if;
 
             count <= count + 1;
