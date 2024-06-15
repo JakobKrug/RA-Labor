@@ -66,17 +66,20 @@ architecture structure of riubs_only_RISC_V is
     signal s_dAdressEX      : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     signal s_dAdressWB      : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     signal s_dAdressMEM     : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
-    signal s_controlWordID  : controlWord                                  := CONTROL_WORD_INIT;
-    signal s_controlWordEX  : controlWord                                  := CONTROL_WORD_INIT;
-    signal s_controlWordMEM : controlWord                                  := CONTROL_WORD_INIT;
-    signal s_controlWordWB  : controlWord                                  := CONTROL_WORD_INIT;
+
+    signal s_controlWordID  : controlWord                                  := control_word_init;
+    signal s_controlWordEX  : controlWord                                  := control_word_init;
+    signal s_controlWordMEM : controlWord                                  := control_word_init;
+    signal s_controlWordWB  : controlWord                                  := control_word_init;
+
     signal s_registersOut   : registerMemory                               := (others => (others => '0'));
     signal s_instructions   : memory                                       := (others => (others => '0'));
     signal s_zero           : std_logic                                    := '0';
+
     signal s_branch_MuxOut  : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_branchDestEX   : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_b_selEX        : std_logic                                    := '0';
     signal s_branchDestMEM  : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
+    signal s_b_selEX        : std_logic                                    := '0';
     signal s_b_selMEM       : std_logic                                    := '0';
 
     signal s_readdataMEM     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');

@@ -2,8 +2,8 @@
 -- Sommersemester 24
 -- Group Details
 -- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
+-- 1. Participant First and Last Name: Jakob Benedikt Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 
 library ieee;
 use ieee.std_logic_1164.all;

@@ -15,19 +15,19 @@ use work.constant_package.all;
 entity register_file is
     -- begin solution:
     generic (
-        word_width : integer := WORD_WIDTH;
-        reg_adr_width  : integer := REG_ADR_WIDTH
+        word_width    : integer := WORD_WIDTH;
+        reg_adr_width : integer := REG_ADR_WIDTH
     );
     port (
-        pi_clk          : in std_logic                                  := '0';
-        pi_rst          : in std_logic                                  := '0';
-        pi_readRegAddr1 : in std_logic_vector(reg_adr_width - 1 downto 0)   := (others => '0');
-        pi_readRegAddr2 : in std_logic_vector(reg_adr_width - 1 downto 0)   := (others => '0');
-        pi_writeRegAddr : in std_logic_vector(reg_adr_width - 1 downto 0)   := (others => '0');
-        pi_writeRegData : in std_logic_vector(word_width - 1 downto 0)  := (others => '0');
-        pi_writeEnable  : in std_logic                                  := '0';
-        po_readRegData1 : out std_logic_vector(word_width - 1 downto 0) := (others => '0');
-        po_readRegData2 : out std_logic_vector(word_width - 1 downto 0) := (others => '0');
+        pi_clk          : in std_logic                                    := '0';
+        pi_rst          : in std_logic                                    := '0';
+        pi_readRegAddr1 : in std_logic_vector(reg_adr_width - 1 downto 0) := (others => '0');
+        pi_readRegAddr2 : in std_logic_vector(reg_adr_width - 1 downto 0) := (others => '0');
+        pi_writeRegAddr : in std_logic_vector(reg_adr_width - 1 downto 0) := (others => '0');
+        pi_writeRegData : in std_logic_vector(word_width - 1 downto 0)    := (others => '0');
+        pi_writeEnable  : in std_logic                                    := '0';
+        po_readRegData1 : out std_logic_vector(word_width - 1 downto 0)   := (others => '0');
+        po_readRegData2 : out std_logic_vector(word_width - 1 downto 0)   := (others => '0');
         po_registerOut  : out registermemory
     );
     -- end solution!!

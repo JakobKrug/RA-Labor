@@ -23,19 +23,70 @@ entity my_alu is
 end entity my_alu;
 
 architecture arc of my_alu is
-    constant C_ZERO                                       : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
-    constant C_ONE                                        : std_logic_vector (dataWidth - 1 downto 0)  := std_logic_vector(to_signed(1, dataWidth));
-    signal s_op1, s_op2                                   : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
-    signal s_res1, s_res2, s_res3, s_res4, s_res5         : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
-    signal s_cIn, s_cOut, s_shift_type, s_shift_direction : std_logic                                  := '0';
-    signal s_lu_op                                        : std_logic_vector(opcodeWidth - 1 downto 0) := (others => '0');
-    signal s_aluOut                                       : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    constant C_ZERO          : std_logic_vector(dataWidth - 1 downto 0)   := std_logic_vector(to_signed(0, dataWidth));
+    constant C_ONE           : std_logic_vector (dataWidth - 1 downto 0)  := std_logic_vector(to_signed(1, dataWidth));
+    signal s_op1             : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_op2             : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res1            : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res2            : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res3            : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res4            : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_res5            : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
+    signal s_cIn             : std_logic                                  := '0';
+    signal s_cOut            : std_logic                                  := '0';
+    signal s_shift_type      : std_logic                                  := '0';
+    signal s_shift_direction : std_logic                                  := '0';
+    signal s_lu_op           : std_logic_vector(opcodeWidth - 1 downto 0) := (others => '0');
+    signal s_aluOut          : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
 begin
-    XOR1  : entity work.my_gen_xor generic map (dataWidth) port map (s_op1, s_op2, s_res1);
-    OR1   : entity work.my_gen_or generic map (dataWidth) port map (s_op1, s_op2, s_res2);
-    AND1  : entity work.my_gen_and generic map (dataWidth) port map (s_op1, s_op2, s_res3);
-    SHIFT : entity work.my_shifter generic map (dataWidth) port map (s_op1, s_op2, s_shift_type, s_shift_direction, s_res4);
-    ADD1  : entity work.my_gen_n_bit_full_adder generic map (dataWidth) port map (s_op1, s_op2, s_cIn, s_res5, s_cOut);
+    my_gen_xor : entity work.my_gen_xor
+        generic map(
+            dataWidth
+        )
+        port map(
+            s_op1,
+            s_op2,
+            s_res1
+        );
+    my_gen_or : entity work.my_gen_or
+        generic map(
+            dataWidth
+        )
+        port map(
+            s_op1,
+            s_op2,
+            s_res2);
+    my_gen_and : entity work.my_gen_and
+        generic map(
+            dataWidth
+        )
+        port map(
+            s_op1,
+            s_op2,
+            s_res3
+        );
+    my_shifter : entity work.my_shifter
+        generic map(
+            dataWidth
+        )
+        port map(
+            s_op1,
+            s_op2,
+            s_shift_type,
+            s_shift_direction,
+            s_res4
+        );
+    my_gen_n_bit_full_adder : entity work.my_gen_n_bit_full_adder
+        generic map(
+            dataWidth
+        )
+        port map(
+            s_op1,
+            s_op2,
+            s_cIn,
+            s_res5,
+            s_cOut
+        );
 
     s_op1       <= pi_op1;
     s_op2       <= pi_op2;
@@ -45,25 +96,19 @@ begin
         '0';
 
     with pi_aluOP select
-        s_shift_type <= '0' when SLL_ALU_OP,
-        '0' when SRL_ALU_OP,
-        '1' when SRA_OP_ALU,
+        s_shift_type <= '1' when SRA_OP_ALU,
         '0' when others;
 
     with pi_aluOP select
-        s_shift_direction <= '0' when SLL_ALU_OP,
-        '1' when SRL_ALU_OP,
-        '1' when SRA_OP_ALU,
+        s_shift_direction <= '1' when SRL_ALU_OP | SRA_OP_ALU,
         '0' when others;
 
     with pi_aluOP select
-        s_cIn <= '0' when ADD_OP_ALU,
-        '1' when SUB_OP_ALU,
-        '1' when SLT_OP_ALU,
-        '1' when SLTU_OP_ALU,
+        s_cIn <= '1' when SUB_OP_ALU | SLT_OP_ALU | SLTU_OP_ALU,
         '0' when others;
-
-    s_aluOut <= s_res1 when pi_aluOP = XOR_ALU_OP
+        
+    s_aluOut <=
+        s_res1 when pi_aluOP = XOR_ALU_OP
         else
         s_res2 when pi_aluOP = OR_ALU_OP
         else
