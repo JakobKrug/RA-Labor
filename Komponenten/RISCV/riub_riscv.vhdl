@@ -312,7 +312,8 @@ begin
             po_sum     => s_branchDestEX
         );
 
-    s_b_selEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else '0';
+    s_b_selEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else
+        '0';
     ---********************************************************************
     ---* Pipeline-Register (EX -> MEM) start
 
@@ -373,8 +374,10 @@ begin
     process (s_clk, s_rst)
 
     begin
-        if (s_rst) then s_b_selMEM                <= '0';
-        elsif rising_edge (s_clk) then s_b_selMEM <= s_b_selEX;
+        if (s_rst) then
+            s_b_selMEM <= '0';
+        elsif rising_edge (s_clk) then
+            s_b_selMEM <= s_b_selEX;
         end if;
     end process;
     ---* memory phase

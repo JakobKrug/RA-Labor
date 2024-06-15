@@ -2,8 +2,8 @@
 -- Sommersemester 24
 -- Group Details
 -- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
+-- 1. Participant First and Last Name: Jakob Benedikt Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 -- ========================================================================
 -- Author:       Marcel Riess
 -- Last updated: 30.04.2024

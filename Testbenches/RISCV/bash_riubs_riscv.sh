@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ghdl -a --std=08 ../../Packages/Constant_Package.vhdl
-ghdl -a --std=08 ../../Packages/Types_Package.vhdl
+ghdl -a --std=08 ../../Packages/Type_Package.vhdl
 ghdl -a --std=08 ../../Packages/Util_Functions_Package.vhdl
 
 #ALU
@@ -33,9 +33,9 @@ ghdl -a --std=08 ../../Komponenten/DataMemory/data_memory.vhdl
 ghdl -a --std=08 ../../Komponenten/Cache/instruction_cache.vhdl
 ghdl -a --std=08 ../../Komponenten/Register/ControlWordRegister.vhdl
 
-ghdl -a --std=08 ../../Komponenten/RISCV/riubs_riscv.vhdl
+ghdl -a --std=08 ../../Komponenten/RISCV/riubs_only_RISC_V.vhdl
 
-ghdl -a  --std=08 riubs_riscv_tb.vhdl
-ghdl -e  --std=08 riubs_riscv_tb
-ghdl -r  --std=08 riubs_riscv_tb --stop-time=10ms --vcd=vcd_riubs.vcd
+ghdl -a  --std=08 riubs_only_RISC_V_tb.vhdl
+ghdl -e  --std=08 riubs_only_RISC_V_tb
+ghdl -r  --std=08 riubs_only_RISC_V_tb --stop-time=10ms --vcd=vcd_riubs.vcd
 #gtkwave ri_only_risc_v.vcd

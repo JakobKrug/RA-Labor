@@ -95,14 +95,14 @@ architecture structure of riub_only_RISC_V is
     signal s_b_selEX       : std_logic                                 := '0';
     signal s_b_selMEM      : std_logic                                 := '0';
 
-    signal s_clk         : std_logic                                 := '0';
-    signal s_rst         : std_logic                                 := '0';
-    signal s_adr         : std_logic_vector(ADR_WIDTH - 1 downto 0)  := (others => '0');
-    signal s_ctrmem      : std_logic_vector(2 downto 0)              := (others => '0');
-    signal s_write       : std_logic                                 := '0';
-    signal s_read        : std_logic                                 := '0';
-    signal s_writedata   : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal s_readdata    : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal s_clk             : std_logic                                 := '0';
+    signal s_rst             : std_logic                                 := '0';
+    signal s_adr             : std_logic_vector(ADR_WIDTH - 1 downto 0)  := (others => '0');
+    signal s_ctrmem          : std_logic_vector(2 downto 0)              := (others => '0');
+    signal s_write           : std_logic                                 := '0';
+    signal s_read            : std_logic                                 := '0';
+    signal s_writedata       : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+    signal s_readdata        : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal s_debugdatamemory : memory;
 
 begin
@@ -322,7 +322,8 @@ begin
             po_sum     => s_branchDestEX
         );
 
-    s_b_selEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else '0';
+    s_b_selEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else
+        '0';
     ---********************************************************************
     ---* Pipeline-Register (EX -> MEM) start
 
@@ -392,12 +393,12 @@ begin
     process (s_clk, s_rst)
 
     begin
-        if (s_rst) then s_b_selMEM                <= '0';
-        elsif rising_edge (s_clk) then s_b_selMEM <= s_b_selEX;
+        if (s_rst) then
+            s_b_selMEM <= '0';
+        elsif rising_edge (s_clk) then
+            s_b_selMEM <= s_b_selEX;
         end if;
     end process;
-    
-
     --Pipeline-Register (MEM -> WB) start
 
     mem_wb_uimmediatereg : entity work.gen_register
@@ -456,23 +457,21 @@ begin
     ---* memory phase *****************************************************
 
     data_memory : entity work.data_memory
-        
+
         port map(
-            pi_adr => s_aluOutMEM,
-            pi_clk => s_clk,
-            pi_rst => s_rst,
-            pi_ctrmem => s_controlWordMEM.MEM_CTR,
-            pi_write => s_controlWordMEM.MEM_WRITE,
-            pi_read => s_controlWordMEM.MEM_READ,
-            pi_writedata => s_op2MEM,
-            po_readdata => s_readdataMEM,
+            pi_adr             => s_aluOutMEM,
+            pi_clk             => s_clk,
+            pi_rst             => s_rst,
+            pi_ctrmem          => s_controlWordMEM.MEM_CTR,
+            pi_write           => s_controlWordMEM.MEM_WRITE,
+            pi_read            => s_controlWordMEM.MEM_READ,
+            pi_writedata       => s_op2MEM,
+            po_readdata        => s_readdataMEM,
             po_debugdatamemory => s_debugdatamemory
         );
 
     ---********************************************************************
     --write back phase
-
-   
 
     lui_mux : entity work.gen_mux4
         generic map(WORD_WIDTH)

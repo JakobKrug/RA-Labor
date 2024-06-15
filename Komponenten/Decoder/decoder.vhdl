@@ -7,40 +7,40 @@ use work.Constant_package.all;
 use work.types_package.all;
 
 entity decoder is
-
+    -- begin solution:
     generic (
-        word_width : integer := WORD_WIDTH
+        instructionWidth : integer := WORD_WIDTH;
+        opcodeWidth      : integer := OPCODE_WIDTH
+
     );
     port (
         pi_clk         : in std_logic;
-        pi_instruction : in std_logic_vector(word_width - 1 downto 0);
-        po_controlWord : out controlword := control_word_init
+        pi_instruction : in std_logic_vector (instructionWidth - 1 downto 0) := (others => '0');
+        po_controlWord : out controlword
     );
-
+    -- end solution!!
 end entity decoder;
-
 architecture arc of decoder is
+    -- begin solution:
+
 begin
-
     process (pi_instruction)
+
         variable v_insFormat : t_instruction_type;
+
     begin
-
-        case pi_instruction(6 downto 0) is
-            when R_OP_INS =>
-                v_insFormat := rFormat;
-            when I_OP_INS | JALR_OP_INS | L_OP_INS =>
-                v_insFormat := iFormat;
-            when LUI_OP_INS | AUIPC_OP_INS | JAL_OP_INS =>
-                v_insFormat := uFormat;
-            when B_OP_INS =>
-                v_insFormat := bFormat;
-            when S_OP_INS =>
-                v_insFormat := sFormat;
-            when others =>
-                v_insFormat := nullFormat;
+        case pi_instruction(opcodeWidth - 1 downto 0) is
+            when R_OP_INS     => v_insFormat     := rFormat;
+            when I_OP_INS     => v_insFormat     := iFormat;
+            when L_OP_INS     => v_insFormat     := iFormat;
+            when LUI_OP_INS   => v_insFormat   := uFormat;
+            when JALR_OP_INS  => v_insFormat  := uFormat;
+            when AUIPC_OP_INS => v_insFormat := uFormat;
+            when JAL_OP_INS   => v_insFormat   := uFormat;
+            when B_OP_INS     => v_insFormat     := bFormat;
+            when S_OP_INS     => v_insFormat     := sFormat;
+            when others       => v_insFormat       := nullFormat;
         end case;
-
         case v_insFormat is
             when rFormat => po_controlWord <= (
                 ALU_OP       => pi_instruction(30) & pi_instruction(14 downto 12),
@@ -53,7 +53,7 @@ begin
                 MEM_CTR => (others => '0'),
                 MEM_READ     => '0',
                 MEM_WRITE    => '0',
-                REG_WRITE    => '1',
+                REG_WRITE    => '0',
                 IS_JUMP      => '0'
                 );
 
@@ -71,24 +71,8 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
-                            );
-
-                    when JALR_OP_INS =>
-                        po_controlword <= (
-                            ALU_OP => (others => '0'),
-                            I_IMM_SEL  => '1',
-                            PC_SEL     => '1',
-                            A_SEL      => '0',
-                            WB_SEL     => "10",
-                            IS_BRANCH  => '0',
-                            CMP_RESULT => '0',
-                            MEM_CTR => (others => '0'),
-                            MEM_READ   => '0',
-                            MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
-                            IS_JUMP    => '1'
                             );
 
                     when L_OP_INS =>
@@ -105,7 +89,7 @@ begin
                                     MEM_CTR    => "000",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
 
@@ -118,10 +102,10 @@ begin
                                     WB_SEL     => "11",
                                     IS_BRANCH  => '0',
                                     CMP_RESULT => '0',
-                                    MEM_CTR    => LH_OP,
+                                    MEM_CTR    => "001",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
 
@@ -134,10 +118,10 @@ begin
                                     WB_SEL     => "11",
                                     IS_BRANCH  => '0',
                                     CMP_RESULT => '0',
-                                    MEM_CTR    => LW_OP,
+                                    MEM_CTR    => "010",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
                             when LBU_OP =>
@@ -149,10 +133,10 @@ begin
                                     WB_SEL     => "11",
                                     IS_BRANCH  => '0',
                                     CMP_RESULT => '0',
-                                    MEM_CTR    => LBU_OP,
+                                    MEM_CTR    => "100",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
                             when LHU_OP =>
@@ -164,10 +148,10 @@ begin
                                     WB_SEL     => "11",
                                     IS_BRANCH  => '0',
                                     CMP_RESULT => '0',
-                                    MEM_CTR    => LHU_OP,
+                                    MEM_CTR    => "101",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
 
@@ -204,20 +188,19 @@ begin
                             IS_JUMP    => '0'
                             );
                 end case;
-
             when uFormat =>
                 case pi_instruction(6 downto 0) is
-                    when LUI_OP_INS =>
+                    when JALR_OP_INS =>
                         po_controlword <= (
                             ALU_OP => (others => '0'),
                             I_IMM_SEL  => '1',
-                            PC_SEL     => '0',
+                            PC_SEL     => '1',
                             A_SEL      => '0',
-                            WB_SEL     => "01",
+                            WB_SEL     => "10",
                             IS_BRANCH  => '0',
                             CMP_RESULT => '0',
                             MEM_CTR => (others => '0'),
-                            MEM_READ   => '1',
+                            MEM_READ   => '0',
                             MEM_WRITE  => '0',
                             REG_WRITE  => '0',
                             IS_JUMP    => '0'
@@ -235,7 +218,7 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
 
@@ -252,8 +235,25 @@ begin
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
                             REG_WRITE  => '0',
-                            IS_JUMP    => '1'
+                            IS_JUMP    => '0'
                             );
+
+                    when LUI_OP_INS =>
+                        po_controlword <= (
+                            ALU_OP => (others => '0'),
+                            I_IMM_SEL  => '1',
+                            PC_SEL     => '0',
+                            A_SEL      => '0',
+                            WB_SEL     => "01",
+                            IS_BRANCH  => '0',
+                            CMP_RESULT => '0',
+                            MEM_CTR => (others => '0'),
+                            MEM_READ   => '0',
+                            MEM_WRITE  => '0',
+                            REG_WRITE  => '0',
+                            IS_JUMP    => '0'
+                            );
+
                     when others => po_controlWord <= (
                         ALU_OP => (others => '0'),
                         I_IMM_SEL   => '0',
@@ -268,6 +268,7 @@ begin
                         REG_WRITE   => '0',
                         IS_JUMP     => '0'
                         );
+
                 end case;
 
             when bFormat =>
@@ -284,7 +285,7 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
                     when FUNC3_BNE =>
@@ -299,7 +300,7 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
 
@@ -315,7 +316,7 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
 
@@ -331,7 +332,7 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
 
@@ -347,7 +348,7 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
 
@@ -363,7 +364,7 @@ begin
                             MEM_CTR => (others => '0'),
                             MEM_READ   => '0',
                             MEM_WRITE  => '0',
-                            REG_WRITE  => '1',
+                            REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
                     when others => po_controlWord <= (
@@ -380,8 +381,8 @@ begin
                         REG_WRITE   => '0',
                         IS_JUMP     => '0'
                         );
-                end case;
 
+                end case;
             when sFormat =>
                 case pi_instruction(14 downto 12) is
 
@@ -394,7 +395,7 @@ begin
                             WB_SEL     => "00",
                             IS_BRANCH  => '0',
                             CMP_RESULT => '0',
-                            MEM_CTR    => SB_OP,
+                            MEM_CTR    => "000",
                             MEM_READ   => '0',
                             MEM_WRITE  => '1',
                             REG_WRITE  => '0',
@@ -410,7 +411,7 @@ begin
                             WB_SEL     => "00",
                             IS_BRANCH  => '0',
                             CMP_RESULT => '0',
-                            MEM_CTR    => SH_OP,
+                            MEM_CTR    => "001",
                             MEM_READ   => '0',
                             MEM_WRITE  => '1',
                             REG_WRITE  => '0',
@@ -426,7 +427,7 @@ begin
                             WB_SEL     => "00",
                             IS_BRANCH  => '0',
                             CMP_RESULT => '0',
-                            MEM_CTR    => SW_OP,
+                            MEM_CTR    => "010",
                             MEM_READ   => '0',
                             MEM_WRITE  => '1',
                             REG_WRITE  => '0',
@@ -447,22 +448,23 @@ begin
                             REG_WRITE  => '0',
                             IS_JUMP    => '0'
                             );
+
                 end case;
-            when others =>
-                po_controlWord <= (
-                    ALU_OP => (others => '0'),
-                    I_IMM_SEL  => '0',
-                    PC_SEL     => '0',
-                    A_SEL      => '0',
-                    WB_SEL     => "00",
-                    IS_BRANCH  => '0',
-                    CMP_RESULT => '0',
-                    MEM_CTR => (others => '0'),
-                    MEM_READ   => '0',
-                    MEM_WRITE  => '0',
-                    REG_WRITE  => '0',
-                    IS_JUMP    => '0'
-                    );
+
+            when others => po_controlWord <= (
+                ALU_OP => (others => '0'),
+                I_IMM_SEL   => '0',
+                PC_SEL      => '0',
+                A_SEL       => '0',
+                WB_SEL      => "00",
+                IS_BRANCH   => '0',
+                CMP_RESULT  => '0',
+                MEM_CTR => (others => '0'),
+                MEM_READ    => '0',
+                MEM_WRITE   => '0',
+                REG_WRITE   => '0',
+                IS_JUMP     => '0'
+                );
         end case;
     end process;
 end architecture;

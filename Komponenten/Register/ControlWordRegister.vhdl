@@ -1,16 +1,3 @@
--- Laboratory RA solutions/versuch3
--- Sommersemester 24
--- Group Details
--- Lab Date:
--- 1. Participant First and Last Name: Jakob Krug
--- 2. Participant First and Last Name: Nicolas Schmidt
--- coding conventions
--- g_<name> Generics
--- p_<name> Ports
--- c_<name> Constants
--- s_<name> Signals
--- v_<name> Variables
-
 -- ========================================================================
 -- Author:       Niklas Gutsmiedl
 -- Last updated: 02.2024
@@ -30,12 +17,12 @@ entity ControlWordRegister is
     port (
         pi_rst         : in std_logic;
         pi_clk         : in std_logic;
-        pi_controlWord : in controlWord  := CONTROL_WORD_INIT;
-        po_controlWord : out controlWord := CONTROL_WORD_INIT
+        pi_controlWord : in controlWord  := CONTROL_WORD_INIT; -- incoming control word
+        po_controlWord : out controlWord := CONTROL_WORD_INIT  -- outgoing control word
     );
 end ControlWordRegister;
 
-architecture behavior of ControlWordRegister is
+architecture arc1 of ControlWordRegister is
     signal s_controlWord : controlWord := CONTROL_WORD_INIT;
 begin
 
@@ -43,10 +30,12 @@ begin
 
     begin
 
-        if (pi_rst) then s_controlWord                <= CONTROL_WORD_INIT;
-        elsif (rising_edge (pi_clk)) then s_controlWord <= pi_controlWord;
+        if (pi_rst) then
+            s_controlWord <= CONTROL_WORD_INIT;
+        elsif rising_edge (pi_clk) then
+            s_controlWord <= pi_controlWord; -- update register contents on falling clock edge
         end if;
     end process;
 
     po_controlWord <= s_controlWord;
-end behavior;
+end arc1;
