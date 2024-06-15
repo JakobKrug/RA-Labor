@@ -21,7 +21,6 @@ entity riubs_only_RISC_V is
 end entity riubs_only_RISC_V;
 
 architecture structure of riubs_only_RISC_V is
-
     constant PERIOD              : time                                      := 10 ns;
     constant ADD_FOUR_TO_ADDRESS : std_logic_vector(WORD_WIDTH - 1 downto 0) := std_logic_vector(to_signed((4), WORD_WIDTH));
     -- signals
@@ -84,6 +83,7 @@ architecture structure of riubs_only_RISC_V is
     signal s_debugdatamemory : memory                                    := (others => (others => '0'));
     signal s_op2MEM          : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_readdataWB      : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+
 begin
 
     s_clk              <= pi_clk;
@@ -112,8 +112,7 @@ begin
             pi_selector => s_controlWordMEM.PC_SEL,
             po_output   => s_pc_MuxOut
         );
-    --Branch mux new
-    --begin solution:
+
     branch_mux : entity work.gen_mux
         generic map(WORD_WIDTH)
         port map(
@@ -122,7 +121,7 @@ begin
             pi_selector => s_b_selMEM,
             po_output   => s_branch_MuxOut
         );
-    --end solution!!
+
     pc : entity work.gen_register_pc
         generic map(WORD_WIDTH)
         port map(
@@ -358,8 +357,7 @@ begin
             pi_data  => s_pc4EX,
             po_data  => s_pc4MEM
         );
-    --ex mem branch new
-    --begin solution:  
+
     EX_MEM_Branch : entity work.gen_register
         generic map(WORD_WIDTH)
         port map(
@@ -371,15 +369,13 @@ begin
         );
 
     process (s_clk, s_rst)
-
     begin
         if (s_rst) then
             s_b_selMEM <= '0';
-        elsif rising_edge (s_clk) then --bei Sprung Register reset
+        elsif rising_edge (s_clk) then
             s_b_selMEM <= s_b_selEX;
         end if;
     end process;
-    --end solution!!
 
     EX_MEM_OP2 : entity work.gen_register
         generic map(WORD_WIDTH)
@@ -490,7 +486,7 @@ begin
             pi_writeRegData => s_wbMuxOut,
             pi_clk          => s_clk,
             pi_rst          => s_rst,
-            pi_writeEnable  => not s_controlWordWB.REG_WRITE,
+            pi_writeEnable  => s_controlWordWB.REG_WRITE,
             po_readRegData1 => s_op1ID,
             po_readRegData2 => s_op2ID,
             po_registerOut  => s_registersOut

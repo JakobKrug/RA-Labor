@@ -37,8 +37,12 @@ begin
     SHIFT : entity work.my_shifter generic map (dataWidth) port map (s_op1, s_op2, s_shift_type, s_shift_direction, s_res4);
     ADD1  : entity work.my_gen_n_bit_full_adder generic map (dataWidth) port map (s_op1, s_op2, s_cIn, s_res5, s_cOut);
 
-    s_op1 <= pi_op1;
-    s_op2 <= pi_op2;
+    s_op1       <= pi_op1;
+    s_op2       <= pi_op2;
+    po_carryOut <= s_cOut;
+    po_aluOut   <= s_aluOut;
+    po_zero     <= '1' when s_aluOut = C_ZERO else
+        '0';
 
     with pi_aluOP select
         s_shift_type <= '0' when SLL_ALU_OP,
@@ -96,11 +100,4 @@ begin
         C_ZERO when (pi_aluOP = SLTU_OP_ALU and (s_op1(dataWidth - 1) = '1') and (s_op2(dataWidth - 1) = '1') and (s_res5(dataWidth - 1) = '0'))
         else
         s_op1;
-
-    po_carryOut <= s_cOut;
-    po_aluOut   <= s_aluOut;
-
-    po_zero <= '1' when s_aluOut = C_ZERO else
-        '0';
-
 end architecture arc;
