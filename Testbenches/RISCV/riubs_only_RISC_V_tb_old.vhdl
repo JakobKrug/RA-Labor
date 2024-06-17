@@ -67,7 +67,8 @@ begin
     -- begin solution:
     riub_only_riscv : entity work.riubs_only_RISC_V
         -- begin solution:
-        port map(
+        port map
+        (
             pi_rst             => s_rst,
             pi_clk             => s_clk,
             pi_instruction     => s_instructions,
@@ -81,7 +82,6 @@ begin
         -- Increment the variable by 1
 
         if rising_edge(s_clk) then
-
             --report "i-Operation failed. Memory 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & "in cycle" &  integer'image(count);    
             --report "i-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & "in cycle" &  integer'image(count);  
             if (count = 8) then
