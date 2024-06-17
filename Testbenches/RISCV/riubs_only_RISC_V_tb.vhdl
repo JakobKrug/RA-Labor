@@ -75,6 +75,23 @@ begin
                     assert (to_integer(signed(s_registersOut(12))) = 1) report "SUB-Operation failed. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(1) severity error;
                 end if;
             end if;
+
+        elsif test = 3 then
+            if (count = 6) then
+                assert (to_integer(signed(s_registersOut(1))) = 9) report "ADDI-Operation failed. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(1)))) & " but should contain " & integer'image(9) severity error;
+            end if;
+            if (count = 7) then
+                assert (to_integer(signed(s_registersOut(2))) = 8) report "ADDI-Operation failed. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(2)))) & " but should contain " & integer'image(8) severity error;
+            end if;
+            if (count = 10) then
+                assert (to_integer(signed(s_registersOut(8))) = 17) report "ADD-Operation failed. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(8)))) & " but should contain " & integer'image(17) severity error;
+            end if;
+            if (count = 11) then
+                assert (to_integer(signed(s_registersOut(11))) =- 1) report "SUB-Operation failed. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(11)))) & " but should contain " & integer'image(-1) severity error;
+            end if;
+            if (count = 12) then
+                assert (to_integer(signed(s_registersOut(12))) = 1) report "SUB-Operation failed. Register 1 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(1) severity error;
+            end if;
             count <= count + 1;
         end if;
 
@@ -83,8 +100,8 @@ begin
     process is
     begin
         s_instructions <= (
-            0 => Asm2Std("ADDI", 1, 0, 9),
-            4 => Asm2Std("ADDI", 2, 0, 8),
+            4 => Asm2Std("ADDI", 1, 0, 9),
+            8 => Asm2Std("ADDI", 2, 0, 8),
             others => (others => '0')
             );
         s_rst <= '1';
@@ -101,11 +118,11 @@ begin
         report "End of tests for I-Instructions!!!";
 
         s_instructions <= (
-            0  => Asm2Std("ADDI", 1, 0, 9),
-            4  => Asm2Std("ADDI", 2, 0, 8),
-            20 => Asm2Std("ADD", 8, 1, 2),
-            24 => Asm2Std("SUB", 11, 1, 2),
-            28 => Asm2Std("SUB", 12, 2, 1),
+            4  => Asm2Std("ADDI", 1, 0, 9),
+            8  => Asm2Std("ADDI", 2, 0, 8),
+            24 => Asm2Std("ADD", 8, 1, 2),
+            28 => Asm2Std("SUB", 11, 1, 2),
+            32 => Asm2Std("SUB", 12, 2, 1),
             others => (others => '0')
             );
         s_rst <= '1';
@@ -120,6 +137,28 @@ begin
             wait for PERIOD / 2;
         end loop;
         report "End of tests for R/I-Instructions!!!";
+
+        s_instructions <= (
+            4  => Asm2Std("ADDI", 1, 0, 9),
+            8  => Asm2Std("ADDI", 2, 0, 8),
+            24 => Asm2Std("ADD", 8, 1, 2),
+            28 => Asm2Std("SUB", 11, 1, 2),
+            32 => Asm2Std("SUB", 12, 2, 1),
+            36 => Asm2Std("SW_OP", 1, 2, 4),
+            others => (others => '0')
+            );
+        s_rst <= '1';
+        wait for PERIOD / 2;
+        test  <= 2;
+        s_rst <= '0';
+
+        for i in 0 to 15 loop
+            s_clk <= '0';
+            wait for PERIOD / 2;
+            s_clk <= '1';
+            wait for PERIOD / 2;
+        end loop;
+        report "End of tests for R/I/S-Instructions!!!";
         report "End of test RIUBS!!!";
         wait;
 

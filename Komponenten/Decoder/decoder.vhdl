@@ -62,7 +62,7 @@ begin
                 case pi_instruction (6 downto 0) is
                     when I_OP_INS =>
                         po_controlWord <= (
-                            ALU_OP     => pi_instruction(30) & pi_instruction(14 downto 12),
+                            ALU_OP     => '0' & pi_instruction(14 downto 12),
                             I_IMM_SEL  => '1',
                             PC_SEL     => '0',
                             A_SEL      => '0',

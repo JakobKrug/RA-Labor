@@ -22,7 +22,7 @@ ghdl -a --std=08 ../../Komponenten/Decoder/decoder.vhdl
 
 #Register
 ghdl -a --std=08 ../../Komponenten/Register/gen_register.vhdl
-ghdl -a --std=08 ../../Komponenten/Register/gen_register_pc.vhdl
+ghdl -a --std=08 ../../Komponenten/Register/gen_register_pc_old.vhdl
 
 #Registerfile
 ghdl -a --std=08 ../../Komponenten/Registerfile/register_file.vhdl
