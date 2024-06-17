@@ -225,7 +225,7 @@ begin
         test  <= 2;
         s_rst <= '0';
 
-        for i in 0 to 200 loop
+        for i in 0 to 15 loop
             s_clk <= '0';
             wait for PERIOD / 2;
             s_clk <= '1';
@@ -234,26 +234,26 @@ begin
         report "End of tests for R/I-Instructions!!!";
 
         s_instructions <= (
-            0  => Asm2Std("ADDI", 1, 0, 9),     -- I-Format instruction: ADDI x1, x0, 9
-            4  => Asm2Std("ADDI", 2, 0, 8),     -- I-Format instruction: ADDI x2, x0, 8
-            8  => Asm2Std("LH_OP", 17, 0, 4),   -- L-Format instruction: LH x17, 4(x0)
-            12 => Asm2Std("LBU_OP", 17, 0, 5),  -- L-Format instruction: LBU x17, 5(x0)
-            16 => Asm2Std("LB_OP", 17, 0, 6),   -- L-Format instruction: LB x17, 6(x0)
-            20 => Asm2Std("OR", 10, 1, 2),      -- R-Format instruction: OR x10, x1, x2
-            24 => Asm2Std("ADD", 8, 1, 2),      -- R-Format instruction: ADD x8, x1, x2
-            28 => Asm2Std("SUB", 11, 1, 2),     -- R-Format instruction: SUB x11, x1, x2
-            32 => Asm2Std("SUB", 12, 2, 1),     -- R-Format instruction: SUB x12, x2, x1
-            36 => Asm2Std("SW_OP", 3, 1, 0),    -- S-Format instruction: SW x3, 1(x0)
-            40 => Asm2Std("ADD", 12, 2, 8),     -- R-Format instruction: ADD x12, x2, x8
-            44 => Asm2Std("SUB", 12, 2, 1),     -- R-Format instruction: SUB x12, x2, x1
-            48 => Asm2Std("AND", 12, 2, 1),     -- R-Format instruction: AND x12, x2, x1
-            52 => Asm2Std("XOR", 12, 2, 1),     -- R-Format instruction: XOR x12, x2, x1
-            56 => Asm2Std("AUIPC", 14, 0, 1),   -- AUIPC instruction: AUIPC x14, 1
-            60 => Asm2Std("AUIPC", 14, 0, 1),   -- AUIPC instruction: AUIPC x14, 1
-            64 => Asm2Std("LUI", 13, 0, 8),     -- LUI instruction: LUI x13, 8
-            68 => Asm2Std("LUI", 13, 0, 29),    -- LUI instruction: LUI x13, 29
-            72 => Asm2Std("JAL", 15, 0, 18432), -- JAL instruction: JAL x15, 18432
-            --148 => Asm2Std("BNE", 1, 2, to_integer(s_branch_amount)),  -- B-Format instruction: BNE x1, x2, s_branch_amount
+            0   => Asm2Std("ADDI", 1, 0, 9),        -- I-Format instruction: ADDI x1, x0, 9
+            4   => Asm2Std("ADDI", 2, 0, 8),        -- I-Format instruction: ADDI x2, x0, 8
+            8   => Asm2Std("LH_OP", 17, 0, 4),      -- L-Format instruction: LH x17, 4(x0)
+            12  => Asm2Std("LBU_OP", 17, 0, 5),     -- L-Format instruction: LBU x17, 5(x0)
+            16  => Asm2Std("LB_OP", 17, 0, 6),      -- L-Format instruction: LB x17, 6(x0)
+            20  => Asm2Std("OR", 10, 1, 2),         -- R-Format instruction: OR x10, x1, x2
+            24  => Asm2Std("ADD", 8, 1, 2),         -- R-Format instruction: ADD x8, x1, x2
+            28  => Asm2Std("SUB", 11, 1, 2),        -- R-Format instruction: SUB x11, x1, x2
+            32  => Asm2Std("SUB", 12, 2, 1),        -- R-Format instruction: SUB x12, x2, x1
+            36  => Asm2Std("SW_OP", 3, 1, 0),       -- S-Format instruction: SW x3, 1(x0)
+            40  => Asm2Std("ADD", 12, 2, 8),        -- R-Format instruction: ADD x12, x2, x8
+            44  => Asm2Std("SUB", 12, 2, 1),        -- R-Format instruction: SUB x12, x2, x1
+            48  => Asm2Std("AND", 12, 2, 1),        -- R-Format instruction: AND x12, x2, x1
+            52  => Asm2Std("XOR", 12, 2, 1),        -- R-Format instruction: XOR x12, x2, x1
+            56  => Asm2Std("AUIPC", 14, 0, 1),      -- AUIPC instruction: AUIPC x14, 1
+            60  => Asm2Std("AUIPC", 14, 0, 1),      -- AUIPC instruction: AUIPC x14, 1
+            64  => Asm2Std("LUI", 13, 8, 0),        -- LUI instruction: LUI x13, 8
+            68  => Asm2Std("LUI", 13, 29, 0),       -- LUI instruction: LUI x13, 29
+            72  => Asm2Std("JAL", 15, 18432, 0),    -- JAL instruction: JAL x15, 18432
+            148 => Asm2Std("BNE", 1, 2, 32),        -- B-Format instruction: BNE x1, x2, s_branch_amount
             152 => Asm2Std("XORI", 11, 0, 0),       -- I-Format instruction: XORI x11, x0, 0
             156 => Asm2Std("SUBI", 11, 0, 0),       -- I-Format instruction: SUBI x11, x0, 0
             160 => Asm2Std("ADDI", 1, 0, 0),        -- I-Format instruction: ADDI x1, x0, 0
@@ -263,15 +263,15 @@ begin
             176 => Asm2Std("SH_OP", 5, 14, 0),      -- S-Format instruction: SH x14, 5(x0)
             180 => Asm2Std("SB_OP", 6, 12, 0),      -- S-Format instruction: SB x12, 6(x0)
             208 => Asm2Std("JALR_OP", 15, 15, -76), -- JALR instruction: JALR x15, x15, -76
-            --212 => Asm2Std("BEQ", 1, 2, to_integer(s_branch_amount)),  -- B-Format instruction: BEQ x1, x2, s_branch_amount
-            216 => Asm2Std("ANDI", 10, 0, 0), -- I-Format instruction: ANDI x10, x0, 0
-            --220 => Asm2Std("BNE", 1, 2, to_integer(s_branch_amount2)), -- B-Format instruction: BNE x1, x2, s_branch_amount2
-            224 => Asm2Std("ADDI", 1, 0, 20), -- I-Format instruction: ADDI x1, x0, 20
+            212 => Asm2Std("BEQ", 1, 2, 32),        -- B-Format instruction: BEQ x1, x2, s_branch_amount
+            216 => Asm2Std("ANDI", 10, 0, 0),       -- I-Format instruction: ANDI x10, x0, 0
+            220 => Asm2Std("BNE", 1, 2, -32),       -- B-Format instruction: BNE x1, x2, s_branch_amount2
+            224 => Asm2Std("ADDI", 1, 0, 20),       -- I-Format instruction: ADDI x1, x0, 20
             others => (others => '0')
             );
         s_rst <= '1';
         wait for PERIOD / 2;
-        test  <= 2;
+        test  <= 3;
         s_rst <= '0';
 
         for i in 0 to 200 loop

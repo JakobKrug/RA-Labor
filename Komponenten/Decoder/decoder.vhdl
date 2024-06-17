@@ -106,7 +106,7 @@ begin
                                     MEM_CTR    => "000",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
 
@@ -122,7 +122,7 @@ begin
                                     MEM_CTR    => "001",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
 
@@ -138,7 +138,7 @@ begin
                                     MEM_CTR    => "010",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
                             when LBU_OP =>
@@ -153,7 +153,7 @@ begin
                                     MEM_CTR    => "100",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
                             when LHU_OP =>
@@ -168,7 +168,7 @@ begin
                                     MEM_CTR    => "101",
                                     MEM_READ   => '1',
                                     MEM_WRITE  => '0',
-                                    REG_WRITE  => '1',
+                                    REG_WRITE  => '0',
                                     IS_JUMP    => '0'
                                     );
 

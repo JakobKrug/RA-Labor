@@ -284,12 +284,12 @@ package body util_functions_package is
         elsif instr = "AUIPC" then
             opcode       := AUIPC_OP_INS;
             rd           := std_logic_vector(to_unsigned(token1, 5));
-            immu         := std_logic_vector(to_unsigned(token2, 20));
+            immu         := std_logic_vector(to_signed(token2, 20));
             machine_word := immu & rd & opcode;
         elsif instr = "JAL" then
             opcode       := JAL_OP_INS;
             rd           := std_logic_vector(to_unsigned(token1, 5));
-            immu         := std_logic_vector(to_unsigned(token2, 20));
+            immu         := std_logic_vector(to_signed(token2, 20));
             machine_word := immu(19) & immu(9 downto 0) & immu(10) & immu(18 downto 11) & rd & opcode;
         elsif instr = "JALR" then
             opcode       := JALR_OP_INS;
