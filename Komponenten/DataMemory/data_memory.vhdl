@@ -1,10 +1,5 @@
--- ========================================================================
--- Author:       Marcel Riess
--- Last updated: 30.05.2024
--- Description:  Generic data cache (read only) with debug port,
---               to allow writing data in testbenches
--- ========================================================================
-
+-- 1. Participant First and Last Name: Jakob Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -13,11 +8,13 @@ use work.constant_package.all;
 use work.types_package.all;
 
 entity data_memory is
-    generic (
+    generic
+    (
         adr_width : integer := ADR_WIDTH; -- Address Bus width of instruction memory (in RISCVI: 32)
         mem_size  : integer := 2 ** 10    -- Size of instruction cache
     );
-    port (
+    port
+    (
         pi_adr             : in std_logic_vector(adr_width - 1 downto 0) := (others => '0'); -- Adress of the instruction to select
         pi_clk             : in std_logic;
         pi_rst             : in std_logic;

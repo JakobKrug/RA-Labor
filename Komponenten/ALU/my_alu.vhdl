@@ -7,12 +7,14 @@ use ieee.numeric_std.all;
 use ieee.math_real.all;
 use work.Constant_Package.all;
 entity my_alu is
-    generic (
+    generic
+    (
         dataWidth   : integer := DATA_WIDTH_GEN;
         opcodeWidth : integer := ALU_OPCODE_WIDTH
     );
 
-    port (
+    port
+    (
         pi_op1, pi_op2 : in std_logic_vector(dataWidth - 1 downto 0);
         pi_aluOP       : in std_logic_vector(opcodeWidth - 1 downto 0);
         po_aluOut      : out std_logic_vector(dataWidth - 1 downto 0);
@@ -40,52 +42,62 @@ architecture arc of my_alu is
     signal s_aluOut          : std_logic_vector(dataWidth - 1 downto 0)   := (others => '0');
 begin
     my_gen_xor : entity work.my_gen_xor
-        generic map(
-            dataWidth
+        generic
+        map(
+        dataWidth
         )
-        port map(
+        port map
+        (
             s_op1,
             s_op2,
             s_res1
         );
     my_gen_or : entity work.my_gen_or
-        generic map(
-            dataWidth
+        generic
+        map(
+        dataWidth
         )
-        port map(
-            s_op1,
-            s_op2,
-            s_res2);
+        port
+        map(
+        s_op1,
+        s_op2,
+        s_res2);
     my_gen_and : entity work.my_gen_and
-        generic map(
-            dataWidth
+        generic
+        map(
+        dataWidth
         )
-        port map(
-            s_op1,
-            s_op2,
-            s_res3
+        port
+        map(
+        s_op1,
+        s_op2,
+        s_res3
         );
     my_shifter : entity work.my_shifter
-        generic map(
-            dataWidth
+        generic
+        map(
+        dataWidth
         )
-        port map(
-            s_op1,
-            s_op2,
-            s_shift_type,
-            s_shift_direction,
-            s_res4
+        port
+        map(
+        s_op1,
+        s_op2,
+        s_shift_type,
+        s_shift_direction,
+        s_res4
         );
     my_gen_n_bit_full_adder : entity work.my_gen_n_bit_full_adder
-        generic map(
-            dataWidth
+        generic
+        map(
+        dataWidth
         )
-        port map(
-            s_op1,
-            s_op2,
-            s_cIn,
-            s_res5,
-            s_cOut
+        port
+        map(
+        s_op1,
+        s_op2,
+        s_cIn,
+        s_res5,
+        s_cOut
         );
 
     s_op1       <= pi_op1;
@@ -106,7 +118,7 @@ begin
     with pi_aluOP select
         s_cIn <= '1' when SUB_OP_ALU | SLT_OP_ALU | SLTU_OP_ALU,
         '0' when others;
-        
+
     s_aluOut <=
         s_res1 when pi_aluOP = XOR_ALU_OP
         else

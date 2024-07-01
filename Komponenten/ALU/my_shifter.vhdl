@@ -1,3 +1,5 @@
+-- 1. Participant First and Last Name: Jakob Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
@@ -5,10 +7,12 @@ use IEEE.MATH_REAL.all;
 use work.CONSTANT_Package.all;
 
 entity my_shifter is
-    generic (
+    generic
+    (
         dataWidth : integer := DATA_WIDTH_GEN
     );
-    port (
+    port
+    (
         pi_op1, pi_op2            : in std_logic_vector(dataWidth - 1 downto 0);
         pi_shiftType, pi_shiftDir : in std_logic;
         po_res                    : out std_logic_vector(dataWidth - 1 downto 0)

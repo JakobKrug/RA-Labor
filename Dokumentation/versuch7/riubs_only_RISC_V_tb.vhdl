@@ -51,9 +51,9 @@ architecture structure of riubs_only_RISC_V_tb is
         160 => std_logic_vector'(std_logic_vector(to_signed(0, 12)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & I_OP_INS),                                     -- I-Befehle 
         164 => std_logic_vector'(std_logic_vector(to_signed(0, 12)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & I_OP_INS),                                     -- I-Befehle 
         168 => std_logic_vector'(std_logic_vector(to_signed(0, 12)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & ADD_OP_ALU(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(8, REG_ADR_WIDTH)) & I_OP_INS),                                     -- I-Befehle 
-        176 => std_logic_vector'("0000000" & std_logic_vector(to_unsigned(13, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & SW_OP & "00100" & S_OP_INS),                                                                                       -- S-Befehle 
-        180 => std_logic_vector'("0000000" & std_logic_vector(to_unsigned(14, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & SH_OP & "00101" & S_OP_INS),                                                                                       -- S-Befehle 
-        184 => std_logic_vector'("0000000" & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & SB_OP & "00110" & S_OP_INS),                                                                                       -- S-Befehle 
+        172 => std_logic_vector'("0000000" & std_logic_vector(to_unsigned(13, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & SW_OP & "00100" & S_OP_INS),                                                                                       -- S-Befehle 
+        176 => std_logic_vector'("0000000" & std_logic_vector(to_unsigned(14, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & SH_OP & "00101" & S_OP_INS),                                                                                       -- S-Befehle 
+        180 => std_logic_vector'("0000000" & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & SB_OP & "00110" & S_OP_INS),                                                                                       -- S-Befehle 
         208 => std_logic_vector'(std_logic_vector(to_signed(-76, 12)) & std_logic_vector(to_unsigned(15, REG_ADR_WIDTH)) & "000" & std_logic_vector(to_unsigned(15, REG_ADR_WIDTH)) & JALR_OP_INS),
         212 => std_logic_vector'(s_branch_amount(11) & s_branch_amount (9 downto 4) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & FUNC3_BEQ & s_branch_amount(3 downto 0) & s_branch_amount(10) & B_OP_INS),     -- B-Format instructions all have the same opcode
         216 => std_logic_vector'(std_logic_vector(to_signed(0, 12)) & std_logic_vector(to_unsigned(0, REG_ADR_WIDTH)) & AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(10, REG_ADR_WIDTH)) & I_OP_INS),                                        -- I-Befehle 
@@ -67,8 +67,7 @@ begin
     -- begin solution:
     riub_only_riscv : entity work.riubs_only_RISC_V
         -- begin solution:
-        port map
-        (
+        port map(
             pi_rst             => s_rst,
             pi_clk             => s_clk,
             pi_instruction     => s_instructions,
@@ -83,8 +82,8 @@ begin
 
         if rising_edge(s_clk) then
 
-            --report "i-Operation failed. Memory 17 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & "in cycle" &  integer'image(count);    
-            --report "i-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & "in cycle" &  integer'image(count);  
+            --report "i-Operation failed. Memory 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & "in cycle" &  integer'image(count);    
+            --report "i-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & "in cycle" &  integer'image(count);  
             if (count = 8) then
                 assert (to_integer(signed(s_registersOut(17))) = 0) report "Load-Operation failed. Register 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(0) severity error;
             end if;
@@ -149,13 +148,13 @@ begin
                 assert (to_integer(signed(s_debugdatamemory(6))) = to_integer(unsigned(s_registersOut(12)(7 downto 0)))) report "Store-Operation failed. Memory at adress 6 contains " & integer'image(to_integer(signed(s_debugdatamemory(6)))) & " but should contain " & integer'image(to_integer(unsigned(s_registersOut(12)(7 downto 0)))) severity error;
             end if;
 
-            if (count = 59) then
+            if (count = 60) then
                 assert (to_integer(signed(s_registersOut(17))) = to_integer(signed(s_debugdatamemory(4)(15 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(signed(s_debugdatamemory(4)(15 downto 0)))) severity error;
             end if;
-            if (count = 60) then
-                assert (to_integer(signed(s_registersOut(17))) = to_integer(signed(s_debugdatamemory(5)(7 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(signed(s_debugdatamemory(5)(7 downto 0)))) severity error;
-            end if;
             if (count = 61) then
+                assert (to_integer(unsigned(s_registersOut(17))) = to_integer(unsigned(s_debugdatamemory(5)(7 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(unsigned(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(unsigned(s_debugdatamemory(5)(7 downto 0)))) severity error;
+            end if;
+            if (count = 62) then
                 assert (to_integer(signed(s_registersOut(17))) = to_integer(signed(s_debugdatamemory(6)(7 downto 0)))) report "Load-Operation failed. Memory at adress 17 contains " & integer'image(to_integer(signed(s_registersOut(17)))) & " but should contain " & integer'image(to_integer(signed(s_debugdatamemory(6)(7 downto 0)))) severity error;
             end if;
 
@@ -171,28 +170,28 @@ begin
             if (count = 66) then
                 assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
             end if;
-            if (count = 67) then
+            if (count = 68) then
                 assert (to_integer(signed(s_registersOut(12))) = 25) report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) severity error;
             end if;
-            if (count = 68) then
+            if (count = 69) then
                 assert (to_integer(signed(s_registersOut(12))) =- 1) report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) severity error;
             end if;
-            if (count = 71) then
+            if (count = 72) then
                 assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 56) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 56) severity error;
             end if;
-            if (count = 72) then
+            if (count = 73) then
                 assert (to_integer(signed(s_registersOut(14))) = 1 * 2 ** 12 + 60) report "AUIPC-Operation failed. Register 14 contains " & integer'image(to_integer(signed(s_registersOut(14)))) & " but should contain " & integer'image(1 * 2 ** 12 + 60) severity error;
             end if;
-            if (count = 73) then
+            if (count = 74) then
                 assert (to_integer(unsigned(s_registersOut(13))) = 8 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(8 * 2 ** 12) severity error;
             end if;
-            if (count = 74) then
+            if (count = 75) then
                 assert (to_integer(signed(s_registersOut(13))) = 29 * 2 ** 12) report "LUI-Operation failed. Register 13 contains " & integer'image(to_integer(signed(s_registersOut(13)))) & " but should contain " & integer'image(29 * 2 ** 12) severity error;
             end if;
-            if (count = 75) then
+            if (count = 76) then
                 assert (to_integer(signed(s_registersOut(15))) = 76) report "JAL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(76) severity error;
             end if;
-            if (count = 104) then
+            if (count = 105) then
                 assert (to_integer(signed(s_registersOut(15))) = 212) report "JARL-Operation failed. Register 15 contains " & integer'image(to_integer(signed(s_registersOut(15)))) & " but should contain " & integer'image(212) severity error;
             end if;
 

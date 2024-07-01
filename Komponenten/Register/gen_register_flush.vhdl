@@ -1,7 +1,3 @@
--- Laboratory RA solutions/versuch1
--- Sommersemester 24
--- Group Details
--- Lab Date: 23.04.2024
 -- 1. Participant First and Last Name: Jakob Benedikt Krug
 -- 2. Participant First and Last Name: Nicolas Schmidt
 library ieee;
@@ -11,15 +7,15 @@ use work.Constant_Package.all;
 
 entity gen_register is
     -- begin solution:
-    generic (
+    generic
+    (
         registerWidth : integer := 32
     );
-    port (
-        pi_clk   : in std_logic                                     := '0';
-        pi_rst   : in std_logic                                     := '0';
-        pi_flush : in std_logic                                     := '0';
-        pi_data  : in std_logic_vector(registerWidth - 1 downto 0)  := (others => '0');
-        po_data  : out std_logic_vector(registerWidth - 1 downto 0) := (others => '0')
+    port
+    (
+        pi_clk, pi_rst, pi_flush : in std_logic                                     := '0';
+        pi_data                  : in std_logic_vector(registerWidth - 1 downto 0)  := (others => '0');
+        po_data                  : out std_logic_vector(registerWidth - 1 downto 0) := (others => '0')
     );
     -- end solution!!
 end gen_register;

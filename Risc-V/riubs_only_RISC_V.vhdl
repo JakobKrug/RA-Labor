@@ -10,8 +10,10 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.constant_package.all;
 use work.types_package.all;
+
 entity riubs_only_RISC_V is
-    port (
+    port
+    (
         pi_rst             : in std_logic;
         pi_clk             : in std_logic       := '0';
         pi_instruction     : in memory          := (others => (others => '0'));
@@ -21,6 +23,7 @@ entity riubs_only_RISC_V is
 end entity riubs_only_RISC_V;
 
 architecture structure of riubs_only_RISC_V is
+
     constant PERIOD              : time                                      := 10 ns;
     constant ADD_FOUR_TO_ADDRESS : std_logic_vector(WORD_WIDTH - 1 downto 0) := std_logic_vector(to_signed((4), WORD_WIDTH));
     -- signals
@@ -66,27 +69,23 @@ architecture structure of riubs_only_RISC_V is
     signal s_dAdressEX      : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     signal s_dAdressWB      : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
     signal s_dAdressMEM     : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
-
-    signal s_controlWordID  : controlWord                                  := control_word_init;
-    signal s_controlWordEX  : controlWord                                  := control_word_init;
-    signal s_controlWordMEM : controlWord                                  := control_word_init;
-    signal s_controlWordWB  : controlWord                                  := control_word_init;
-
+    signal s_controlWordID  : controlWord                                  := CONTROL_WORD_INIT;
+    signal s_controlWordEX  : controlWord                                  := CONTROL_WORD_INIT;
+    signal s_controlWordMEM : controlWord                                  := CONTROL_WORD_INIT;
+    signal s_controlWordWB  : controlWord                                  := CONTROL_WORD_INIT;
     signal s_registersOut   : registerMemory                               := (others => (others => '0'));
     signal s_instructions   : memory                                       := (others => (others => '0'));
     signal s_zero           : std_logic                                    := '0';
-
     signal s_branch_MuxOut  : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_branchDestEX   : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
-    signal s_branchDestMEM  : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_b_selEX        : std_logic                                    := '0';
+    signal s_branchDestMEM  : std_logic_vector(WORD_WIDTH - 1 downto 0)    := (others => '0');
     signal s_b_selMEM       : std_logic                                    := '0';
 
     signal s_readdataMEM     : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_debugdatamemory : memory                                    := (others => (others => '0'));
     signal s_op2MEM          : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal s_readdataWB      : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-
 begin
 
     s_clk              <= pi_clk;
@@ -99,8 +98,10 @@ begin
     ---* program counter adder and pc-register
     ---********************************************************************
     pc_incrementer : entity work.my_gen_n_bit_full_adder
-        generic map(WORD_WIDTH)
-        port map(
+        generic
+        map (WORD_WIDTH)
+        port map
+        (
             pi_op1     => s_instructionAddress,
             pi_op2     => ADD_FOUR_TO_ADDRESS,
             pi_carryIn => '0',
@@ -108,83 +109,98 @@ begin
         );
 
     pc_mux : entity work.gen_mux
-        generic map(WORD_WIDTH)
-        port map(
-            pi_first    => s_pcIn,
-            pi_second   => s_aluOutMEM,
-            pi_selector => s_controlWordMEM.PC_SEL,
-            po_output   => s_pc_MuxOut
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_first    => s_pcIn,
+        pi_second   => s_aluOutMEM,
+        pi_selector => s_controlWordMEM.PC_SEL,
+        po_output   => s_pc_MuxOut
         );
-
+    --Branch mux new
+    --begin solution:
     branch_mux : entity work.gen_mux
-        generic map(WORD_WIDTH)
-        port map(
-            pi_first    => s_pc_MuxOut,
-            pi_second   => s_branchDestMEM,
-            pi_selector => s_b_selMEM,
-            po_output   => s_branch_MuxOut
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_first    => s_pc_MuxOut,
+        pi_second   => s_branchDestMEM,
+        pi_selector => s_b_selMEM,
+        po_output   => s_branch_MuxOut
         );
-
+    --end solution!!
     pc : entity work.gen_register_pc
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
-            pi_data => s_branch_MuxOut,
-            po_data => s_instructionAddress
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst  => s_rst,
+        pi_clk  => s_clk,
+        pi_data => s_branch_MuxOut,
+        po_data => s_instructionAddress
         );
     ---********************************************************************
     ---* instruction fetch 
     ---********************************************************************
     instrcache : entity work.instruction_cache
-        port map(
-            pi_clk              => not s_clk,
-            pi_adr              => s_instructionAddress,
-            pi_instructionCache => s_instructions,
-            po_instruction      => s_instrIF
+        port
+        map (
+        pi_clk              => not s_clk,
+        pi_adr              => s_instructionAddress,
+        pi_instructionCache => s_instructions,
+        po_instruction      => s_instrIF
         );
 
     ---********************************************************************
     ---* Pipeline-Register (IF -> ID) start
     ---********************************************************************
     if_id_instructionreg : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_instrIF,
-            po_data  => s_instrID
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_instrIF,
+        po_data  => s_instrID
         );
     IF_ID_PC : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_instructionAddress,
-            po_data  => s_pcID
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_instructionAddress,
+        po_data  => s_pcID
         );
 
     ---********************************************************************
     ---* decode phase
     ---********************************************************************
     decoder : entity work.decoder
-        port map(
-            pi_clk         => s_clk,
-            pi_instruction => s_instrID,
-            po_controlWord => s_controlWordID
+        port
+        map (
+        pi_clk         => s_clk,
+        pi_instruction => s_instrID,
+        po_controlWord => s_controlWordID
         );
 
     sign_extender : entity work.sign_extender
-        generic map(WORD_WIDTH)
-        port map(
-            pi_instr      => s_instrID,
-            po_iImmediate => s_iImmediateID,
-            po_uImmediate => s_uImmediateID,
-            po_jImmediate => s_jImmediateID,
-            po_bImmediate => s_bImmediateID,
-            po_sImmediate => s_sImmediateID
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_instr      => s_instrID,
+        po_iImmediate => s_iImmediateID,
+        po_uImmediate => s_uImmediateID,
+        po_jImmediate => s_jImmediateID,
+        po_bImmediate => s_bImmediateID,
+        po_sImmediate => s_sImmediateID
         );
 
     with s_instrID(6 downto 0) select
@@ -202,297 +218,351 @@ begin
     ---* Pipeline-Register (ID -> EX) start
     ---********************************************************************
     id_ex_immediatereg : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_immediateID,
-            po_data  => s_immediateEX
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_immediateID,
+        po_data  => s_immediateEX
         );
 
     id_ex_op1 : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_op1ID,
-            po_data  => s_op1EX
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_op1ID,
+        po_data  => s_op1EX
         );
 
     id_ex_op2 : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_op2ID,
-            po_data  => s_op2EX
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_op2ID,
+        po_data  => s_op2EX
         );
 
     id_ex_controlwordreg : entity work.ControlWordRegister
-        port map(
-            pi_rst         => s_rst,
-            pi_clk         => s_clk,
-            pi_controlword => s_controlWordID,
-            po_controlword => s_controlWordEX
+        port
+        map (
+        pi_rst         => s_rst,
+        pi_clk         => s_clk,
+        pi_controlword => s_controlWordID,
+        po_controlword => s_controlWordEX
         );
 
     id_ex_adressrsdreg : entity work.gen_register
-        generic map(REG_ADR_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_instrID(11 downto 7),
-            po_data  => s_dAdressEX
+        generic
+        map (REG_ADR_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_instrID(11 downto 7),
+        po_data  => s_dAdressEX
         );
 
     ID_EX_PC : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_pcID,
-            po_data  => s_pcEX
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_pcID,
+        po_data  => s_pcEX
         );
     ---********************************************************************
     ---* execute phase
     ---********************************************************************
     imm_mux : entity work.gen_mux
-        generic map(WORD_WIDTH)
-        port map(
-            pi_first    => s_op2EX,
-            pi_second   => s_immediateEX,
-            pi_selector => s_controlWordEX.I_IMM_SEL,
-            po_output   => s_immMuxOut
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_first    => s_op2EX,
+        pi_second   => s_immediateEX,
+        pi_selector => s_controlWordEX.I_IMM_SEL,
+        po_output   => s_immMuxOut
         );
 
     --- mux for input 1 ALU
     alu1_mux : entity work.gen_mux
-        generic map(WORD_WIDTH)
-        port map(
-            pi_first    => s_op1EX,
-            pi_second   => s_pcEX,
-            pi_selector => s_controlWordEX.A_SEL,
-            po_output   => s_pcMuxOut
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_first    => s_op1EX,
+        pi_second   => s_pcEX,
+        pi_selector => s_controlWordEX.A_SEL,
+        po_output   => s_pcMuxOut
         );
 
     alu : entity work.my_alu
-        generic map(WORD_WIDTH, ALU_OPCODE_WIDTH)
-        port map(
-            pi_op1      => s_pcMuxOut,
-            pi_op2      => s_immMuxOut,
-            pi_aluOp    => s_controlWordEX.ALU_OP,
-            po_aluOut   => s_aluOutEX,
-            po_carryOut => s_carryOut,
-            po_zero     => s_zero
+        generic
+        map (WORD_WIDTH, ALU_OPCODE_WIDTH)
+        port
+        map (
+        pi_op1      => s_pcMuxOut,
+        pi_op2      => s_immMuxOut,
+        pi_aluOp    => s_controlWordEX.ALU_OP,
+        po_aluOut   => s_aluOutEX,
+        po_carryOut => s_carryOut,
+        po_zero     => s_zero
         );
 
     pc4_incrementer : entity work.my_gen_n_bit_full_adder
-        generic map(WORD_WIDTH)
-        port map(
-            pi_op1     => s_pcEx,
-            pi_op2     => ADD_FOUR_TO_ADDRESS,
-            pi_carryIn => '0',
-            po_sum     => s_pc4EX
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_op1     => s_pcEx,
+        pi_op2     => ADD_FOUR_TO_ADDRESS,
+        pi_carryIn => '0',
+        po_sum     => s_pc4EX
         );
 
     branch_alu_adder : entity work.my_gen_n_bit_full_adder
-        generic map(WORD_WIDTH)
-        port map(
-            pi_op1     => s_pcEX,
-            pi_op2     => s_immediateEX,
-            pi_carryIn => '0',
-            po_sum     => s_branchDestEX
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_op1     => s_pcEX,
+        pi_op2     => s_immediateEX,
+        pi_carryIn => '0',
+        po_sum     => s_branchDestEX
         );
+
     s_B_SELEX <= '1' when s_controlWordEX.IS_BRANCH and (s_zero xor s_controlWordEX.CMP_RESULT) else
         '0';
     ---********************************************************************
     ---* Pipeline-Register (EX -> MEM) startpi_clk
     ---********************************************************************
     ex_mem_immediatereg : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_immediateEX,
-            po_data  => s_immediateMEM
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_immediateEX,
+        po_data  => s_immediateMEM
         );
 
     ex_mem_controlwordreg : entity work.ControlWordRegister
-        port map(
-            pi_rst         => s_rst,
-            pi_clk         => s_clk,
-            pi_controlword => s_controlWordEX,
-            po_controlword => s_controlWordMEM
+        port
+        map (
+        pi_rst         => s_rst,
+        pi_clk         => s_clk,
+        pi_controlword => s_controlWordEX,
+        po_controlword => s_controlWordMEM
         );
 
     ex_mem_adressrsdreg : entity work.gen_register
-        generic map(REG_ADR_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_dAdressEX,
-            po_data  => s_dAdressMEM
+        generic
+        map (REG_ADR_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_dAdressEX,
+        po_data  => s_dAdressMEM
         );
 
     ex_mem_aluresultreg : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_aluOutEX,
-            po_data  => s_aluOutMEM
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_aluOutEX,
+        po_data  => s_aluOutMEM
         );
 
     EX_MEM_PC4 : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_pc4EX,
-            po_data  => s_pc4MEM
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_pc4EX,
+        po_data  => s_pc4MEM
         );
-
+    --ex mem branch new
+    --begin solution:  
     EX_MEM_Branch : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_branchDestEX,
-            po_data  => s_branchDestMEM
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_branchDestEX,
+        po_data  => s_branchDestMEM
         );
 
     process (s_clk, s_rst)
+
     begin
         if (s_rst) then
             s_b_selMEM <= '0';
-        elsif rising_edge (s_clk) then
+        elsif rising_edge (s_clk) then --bei Sprung Register reset
             s_b_selMEM <= s_b_selEX;
         end if;
     end process;
+    --end solution!!
 
     EX_MEM_OP2 : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst   => s_rst,
-            pi_clk   => s_clk,
-            pi_flush => s_b_selMEM or s_controlWordMEM.PC_SEL,
-            pi_data  => s_op2EX,
-            po_data  => s_op2MEM
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst   => s_rst,
+        pi_clk   => s_clk,
+        pi_flush => s_b_selMEM or s_controlWordMEM.IS_JUMP,
+        pi_data  => s_op2EX,
+        po_data  => s_op2MEM
         );
 
     ---********************************************************************
     ---* memory phase
     ---********************************************************************
     memdata : entity work.data_memory
-        generic map(ADR_WIDTH, mem_size => 2 ** 10)
+        generic
+        map (ADR_WIDTH)
 
-        port map(
-            pi_adr             => s_aluOutMEM,
-            pi_rst             => s_rst,
-            pi_clk             => s_clk,
-            pi_ctrmem          => s_controlWordMEM.MEM_CTR,
-            pi_read            => s_controlWordMEM.MEM_READ,
-            pi_write           => s_controlWordMEM.MEM_WRITE,
-            pi_writedata       => s_op2MEM,
-            po_readdata        => s_readdataMEM,
-            po_debugdatamemory => s_debugdatamemory
+        port
+        map(
+        pi_adr             => s_aluOutMEM,
+        pi_rst             => s_rst,
+        pi_clk             => s_clk,
+        pi_ctrmem          => s_controlWordMEM.MEM_CTR,
+        pi_read            => s_controlWordMEM.MEM_READ,
+        pi_write           => s_controlWordMEM.MEM_WRITE,
+        pi_writedata       => s_op2MEM,
+        po_readdata        => s_readdataMEM,
+        po_debugdatamemory => s_debugdatamemory
         );
 
     ---********************************************************************
     ---* Pipeline-Register (MEM -> WB) start
     ---********************************************************************
     mem_wb_uimmediatereg : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
-            pi_data => s_immediateMEM,
-            po_data => s_immediateWB
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst  => s_rst,
+        pi_clk  => s_clk,
+        pi_data => s_immediateMEM,
+        po_data => s_immediateWB
         );
 
     mem_wb_controlwordreg : entity work.ControlWordRegister
-        port map(
-            pi_rst         => s_rst,
-            pi_clk         => s_clk,
-            pi_controlword => s_controlWordMEM,
-            po_controlword => s_controlWordWB
+        port
+        map (
+        pi_rst         => s_rst,
+        pi_clk         => s_clk,
+        pi_controlword => s_controlWordMEM,
+        po_controlword => s_controlWordWB
         );
 
     mem_wb_adressrsdreg : entity work.gen_register
-        generic map(REG_ADR_WIDTH)
-        port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
-            pi_data => s_dAdressMEM,
-            po_data => s_dAdressWB
+        generic
+        map (REG_ADR_WIDTH)
+        port
+        map (
+        pi_rst  => s_rst,
+        pi_clk  => s_clk,
+        pi_data => s_dAdressMEM,
+        po_data => s_dAdressWB
         );
 
     mem_wb_aluresultreg : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
-            pi_data => s_aluOutMEM,
-            po_data => s_aluOutWB
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst  => s_rst,
+        pi_clk  => s_clk,
+        pi_data => s_aluOutMEM,
+        po_data => s_aluOutWB
         );
 
     MEM_WB_PC4 : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
-            pi_data => s_pc4MEM,
-            po_data => s_pc4WB
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst  => s_rst,
+        pi_clk  => s_clk,
+        pi_data => s_pc4MEM,
+        po_data => s_pc4WB
         );
 
     MEM_WB_MEM : entity work.gen_register
-        generic map(WORD_WIDTH)
-        port map(
-            pi_rst  => s_rst,
-            pi_clk  => s_clk,
-            pi_data => s_readdataMEM,
-            po_data => s_readdataWB
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_rst  => s_rst,
+        pi_clk  => s_clk,
+        pi_data => s_readdataMEM,
+        po_data => s_readdataWB
         );
 
     ---********************************************************************
     ---* write back phase
     ---********************************************************************
     lui_mux : entity work.gen_mux4
-        generic map(WORD_WIDTH)
-        port map(
-            pi_first    => s_aluOutWB,
-            pi_second   => s_immediateWB,
-            pi_third    => s_pc4wb,
-            pi_four     => s_readdataMEM,
-            pi_selector => s_controlWordWB.WB_SEL,
-            po_output   => s_wbMuxOut
+        generic
+        map (WORD_WIDTH)
+        port
+        map (
+        pi_first    => s_aluOutWB,
+        pi_second   => s_immediateWB,
+        pi_third    => s_pc4wb,
+        pi_four     => s_readdataMEM,
+        pi_selector => s_controlWordWB.WB_SEL,
+        po_output   => s_wbMuxOut
         );
 
     ---********************************************************************
     ---* register file
     ---********************************************************************
     register_file : entity work.register_file
-        port map(
-            pi_readRegAddr1 => s_instrID(19 downto 15),
-            pi_readRegAddr2 => s_instrID(24 downto 20),
-            pi_writeRegAddr => s_dAdressWB,
-            pi_writeRegData => s_wbMuxOut,
-            pi_clk          => s_clk,
-            pi_rst          => s_rst,
-            pi_writeEnable  => s_controlWordWB.REG_WRITE,
-            po_readRegData1 => s_op1ID,
-            po_readRegData2 => s_op2ID,
-            po_registerOut  => s_registersOut
+        port
+        map (
+        pi_readRegAddr1 => s_instrID(19 downto 15),
+        pi_readRegAddr2 => s_instrID(24 downto 20),
+        pi_writeRegAddr => s_dAdressWB,
+        pi_writeRegData => s_wbMuxOut,
+        pi_clk          => s_clk,
+        pi_rst          => s_rst,
+        pi_writeEnable  => not s_controlWordWB.REG_WRITE,
+        po_readRegData1 => s_op1ID,
+        po_readRegData2 => s_op2ID,
+        po_registerOut  => s_registersOut
         );
     ---********************************************************************
     ---********************************************************************    

@@ -1,3 +1,5 @@
+-- 1. Participant First and Last Name: Jakob Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 library ieee;
 use ieee.std_logic_1164.all;
 

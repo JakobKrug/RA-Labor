@@ -1,3 +1,5 @@
+-- 1. Participant First and Last Name: Jakob Krug
+-- 2. Participant First and Last Name: Nicolas Schmidt
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use work.Constant_Package.all;

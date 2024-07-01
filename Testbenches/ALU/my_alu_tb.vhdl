@@ -31,10 +31,12 @@ architecture behavior of my_alu_tb is
 begin
 
     lu1 : entity work.my_alu
-        generic map(
-            DATA_WIDTH_GEN, ALU_OPCODE_WIDTH
+        generic
+        map(
+        DATA_WIDTH_GEN, ALU_OPCODE_WIDTH
         )
-        port map(
+        port map
+        (
             pi_op1      => s_op1,
             pi_op2      => s_op2,
             pi_aluOp    => s_luOp,
@@ -63,6 +65,7 @@ begin
                 wait for PERIOD / 2;
                 s_clk <= '0';
                 wait for PERIOD / 2;
+
                 -- and
                 s_luOp   <= AND_ALU_OP;
                 s_expect <= s_op1 and s_op2;
@@ -70,9 +73,8 @@ begin
                 wait for PERIOD / 2;
                 s_clk <= '0';
                 wait for PERIOD / 2;
-                assert (s_expect = s_luOut)
-                report "Had error in AND-Function "
-                    severity error;
+                assert (s_expect = s_luOut) report "Had error in AND-Function " severity error;
+
                 -- or
                 s_luOp   <= OR_ALU_OP;
                 s_expect <= s_op1 or s_op2;
@@ -80,9 +82,8 @@ begin
                 wait for PERIOD / 2;
                 s_clk <= '0';
                 wait for PERIOD / 2;
-                assert (s_expect = s_luOut)
-                report "Had error in OR-Function "
-                    severity error;
+                assert (s_expect = s_luOut) report "Had error in OR-Function " severity error;
+
                 -- xor
                 s_luOp   <= XOR_ALU_OP;
                 s_expect <= s_op1 xor s_op2;
@@ -90,9 +91,7 @@ begin
                 wait for PERIOD / 2;
                 s_clk <= '0';
                 wait for PERIOD / 2;
-                assert (s_expect = s_luOut)
-                report "Had error in XOR-Function : " & to_string(signed(s_op1)) & " xor " & to_string(signed(s_op2)) & " = " & to_string(signed(s_luOp)) & " = " & to_string(signed(s_luOut))
-                    severity error;
+                assert (s_expect = s_luOut) report "Had error in XOR-Function : " & to_string(signed(s_op1)) & " xor " & to_string(signed(s_op2)) & " = " & to_string(signed(s_luOp)) & " = " & to_string(signed(s_luOut)) severity error;
 
                 if (op2_i >= 0 and op2_i < integer(log2(real(DATA_WIDTH_GEN)))) then
                     -- sll
@@ -107,9 +106,7 @@ begin
                     wait for PERIOD / 2;
                     s_clk <= '0';
                     wait for PERIOD / 2;
-                    assert (s_expect = s_luOut)
-                    report "Had error in sll-Function "
-                        severity error;
+                    assert (s_expect = s_luOut) report "Had error in sll-Function " severity error;
 
                     -- srl
                     s_luOp    <= SRL_ALU_OP;
@@ -124,9 +121,7 @@ begin
                     wait for PERIOD / 2;
                     s_clk <= '0';
                     wait for PERIOD / 2;
-                    assert (s_expect = s_luOut)
-                    report "Had error in srl-Function "
-                        severity error;
+                    assert (s_expect = s_luOut) report "Had error in srl-Function " severity error;
 
                     -- sra
                     s_luOp    <= SRA_OP_ALU;
@@ -140,9 +135,7 @@ begin
                     wait for PERIOD / 2;
                     s_clk <= '0';
                     wait for PERIOD / 2;
-                    assert (s_expect = s_luOut)
-                    report "Had error in sra-Function"
-                        severity error;
+                    assert (s_expect = s_luOut) report "Had error in sra-Function" severity error;
                 end if;
 
                 -- add
@@ -155,13 +148,10 @@ begin
                 if (((op1_i + op2_i) /= to_integer(signed(s_luOut)))                         -- Summe mit ALU result vergleichen
                     and ((op1_i + op2_i - 2 ** DATA_WIDTH_GEN) /= (to_integer(signed(s_luOut)))) -- Überlauf prüfen
                     and ((to_integer(signed(s_luOut)) /= (op1_i + op2_i) mod (2 ** (DATA_WIDTH_GEN))))) then
-                    report integer'image(op1_i) & "+" & integer'image(op2_i) & " ==> " & integer'image(op1_i + op2_i) & " but add-op simulation returns " & integer'image(to_integer(signed(s_luOut)))
-                        severity error;
+                    report integer'image(op1_i) & "+" & integer'image(op2_i) & " ==> " & integer'image(op1_i + op2_i) & " but add-op simulation returns " & integer'image(to_integer(signed(s_luOut))) severity error;
                 end if;
 
-                assert ((op1_i + op2_i) = 0 and s_zero = '1') or (((op1_i + op2_i) /= 0 and s_zero = '0') or ((op1_i + op2_i) >= 2 ** DATA_WIDTH_GEN and s_zero = '1') or ((op1_i + op2_i) <= 2 ** DATA_WIDTH_GEN and s_zero = '1'))
-                report "Had error in zero flag of add-Function   mit " & integer'image(to_integer(signed(s_expect))) & integer'image(((op1_i))) & integer'image(((op2_i)))
-                    severity error;
+                assert ((op1_i + op2_i) = 0 and s_zero = '1') or (((op1_i + op2_i) /= 0 and s_zero = '0') or ((op1_i + op2_i) >= 2 ** DATA_WIDTH_GEN and s_zero = '1') or ((op1_i + op2_i) <= 2 ** DATA_WIDTH_GEN and s_zero = '1')) report "Had error in zero flag of add-Function   mit " & integer'image(to_integer(signed(s_expect))) & integer'image(((op1_i))) & integer'image(((op2_i))) severity error;
 
                 -- sub
                 s_luOp <= SUB_OP_ALU;
@@ -213,8 +203,7 @@ begin
                 -- sltu
                 wait for PERIOD / 2;
                 if ((op1_i < op2_i) and (to_integer(signed(s_luOut)) /= 1)) then
-                    report integer'image(op1_i) & "<" & integer'image(op2_i) & " ==> " & boolean'image(op1_i < op2_i) & " but sltu returns " & to_string(s_luOut)
-                        severity error;
+                    report integer'image(op1_i) & "<" & integer'image(op2_i) & " ==> " & boolean'image(op1_i < op2_i) & " but sltu returns " & to_string(s_luOut) severity error;
                 end if;
             end loop;
         end loop;
